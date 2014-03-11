@@ -45,9 +45,10 @@ namespace SevenDayRogue
 
             Vector2 startPos = new Vector2(1000, 1000);
 
-            if (game.r.Next(2) == -10)
+            //if (game.r.Next(2) == 0)
+                if(true)
             {
-                LoadCave();
+                startPos = LoadCave();
                 //LoadMaze();
             }
             else
@@ -85,10 +86,13 @@ namespace SevenDayRogue
             }
         }
 
-        private void LoadCave()
+        private Vector2 LoadCave()
         {
-            int height = 100;
-            int width = 100;
+
+            Vector2 startPos = new Vector2(1000, 1000);
+
+            int height = 50;
+            int width = 50;
             CellAutoCave CACave = new CellAutoCave(width, height);
 
             tileArray = new Tile[width, height];
@@ -98,7 +102,9 @@ namespace SevenDayRogue
                 for (int j = 0; j < tileArray.GetLength(1); j++)
                 {
                     bool isSolid = false;
-                    if (i == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1)
+                    TileType tileType = TileType.Stone;
+
+                    if (i == 0 || j == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1)
                     {
                         isSolid = true;
                     }
@@ -109,13 +115,24 @@ namespace SevenDayRogue
                         {
                             isSolid = true;
                         }
+                        else if (CACave.grid[i, j] == 2)
+                        {
+                            startPos = TileHelper.GetWorldPosition(i, j);
+                            tileType = TileType.StairDown;
+                        }
+                        else if (CACave.grid[i, j] == 3)
+                        {
+                            tileType = TileType.StairUp;
+                        }
                        
                     }
 
 
-                    tileArray[i, j] = new Tile(isSolid, TileType.Stone);
+                    tileArray[i, j] = new Tile(isSolid, tileType);
                 }
             }
+
+            return startPos;
 
         }
 
@@ -123,8 +140,8 @@ namespace SevenDayRogue
 
         private void LoadMaze()
         {
-            int height = 100;
-            int width = 100;
+            int height = 50;
+            int width = 50;
 
           
             MazeBuilder mb = new MazeBuilder(height, width,true, 0);
@@ -163,7 +180,7 @@ namespace SevenDayRogue
             Vector2 startPos = new Vector2(1000,1000);
 
             Generation berryGen = new Generation();
-            berryGen.Generate(100, 100);
+            berryGen.Generate(50, 50);
 
             tileArray = new Tile[berryGen.Width, berryGen.Height];
 

@@ -3,9 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
+
 namespace SevenDayRogue
 {
+    public class CavePoint
+    {
+        public int x;
+        public int y;
 
+       public  CavePoint(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
 
     public struct generation_params
     {
@@ -26,6 +38,9 @@ namespace SevenDayRogue
     {
         public const int TILE_FLOOR = 0;
         public const int TILE_WALL = 1;
+        public const int TILE_START = 2;
+        public const int TILE_END = 3;
+
 
         public int[,] grid;
         public int[,] grid2;
@@ -41,6 +56,10 @@ namespace SevenDayRogue
         int generations;
 
         Random r;
+
+
+        private bool hasStart = false;
+        private bool hasEnd = false;
 
         public CellAutoCave(int x, int y)
         {
@@ -64,15 +83,17 @@ namespace SevenDayRogue
 
             for (int i = 0; i < 3; i++)
             {
-                generation2(true);
+               
+                generation2(true,false);
             }
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
-                generation2(false);
+                generation2(false,false);
             }
 
-          
-            CreateMapWalls(size_x, size_y, 10);
+
+            generation2(false, true);
+
         }
 
         public int randpick()
@@ -93,11 +114,15 @@ namespace SevenDayRogue
             grid = new int[size_x, size_y];
             grid2 = new int[size_x, size_y];
 
+            List<CavePoint> pointList = new List<CavePoint>();
+
             for (int i = 0; i < size_x; i++)
             {
                 for (int j = 0; j < size_y; j++)
                 {
                     grid[i, j] = randpick();
+                   
+
                     grid2[i, j] = TILE_WALL;
                 }
             }
@@ -107,8 +132,8 @@ namespace SevenDayRogue
             {
                 grid[0, i] = TILE_WALL;
                 grid[1, i] = TILE_WALL;
-                //grid[size_x - 1, i] = TILE_WALL;
-                //grid[size_x - 2, i] = TILE_WALL;
+                grid[size_x - 1, i] = TILE_WALL;
+                grid[size_x - 2, i] = TILE_WALL;
             }
 
             for (int i = 0; i < size_x; i++)
@@ -119,15 +144,50 @@ namespace SevenDayRogue
                 grid[i, size_y - 2] = TILE_WALL;
             }
 
+            
+
+        }
+
+        private void AddStairs(List<CavePoint> pointList)
+        {
+
+            CavePoint p = pointList[r.Next(pointList.Count - 1)];
+            pointList.Remove(p);
+            AddStart(p.x,p.y);
+
+            CavePoint p2 = pointList[r.Next(pointList.Count - 1)];
+            AddEnd(p2.x, p2.y);
+
+        }
+
+        private void AddStart(int x, int y)
+        {
+            if (!hasStart)
+            {
+                grid2[x, y] = TILE_START;
+                hasStart = true;
+            }
+        }
+
+        private void AddEnd(int x, int y)
+        {
+            if (!hasEnd)
+            {
+                grid2[x, y] = TILE_END;
+                hasEnd = true;
+            }
         }
 
         //a tile becomes a wall if it was a wall and 4 or more of its nine neighbors were walls, 
         //or if it was not a wall and 5 or more neighbors were. 
         //Put more succinctly, a tile is a wall if the 3x3 region centered on it contained at least 5 walls.
-        public void generation2(bool fillSpace)
+        public void generation2(bool fillSpace, bool placeStairs)
         {
             int adjCount; //nearby walls
             int adjCount2; //nearby walls (in empty space)
+
+
+            List<CavePoint> pointList = new List<CavePoint>();
 
             //traverse grid and make grid2
             for (int i = 0; i < size_x; i++)
@@ -151,12 +211,19 @@ namespace SevenDayRogue
                         }
                     }
 
-                    if (adjCount >= 5)
+
+                    if(grid2[i,j] == TILE_START || grid2[i,j] == TILE_END)
+                    {
+
+                    
+                    }
+                    else if (adjCount >= 5)
                     {
                         grid2[i, j] = TILE_WALL;
                     }
                     else
                     {
+                        pointList.Add(new CavePoint(i, j));
                         grid2[i, j] = TILE_FLOOR;
                     }
 
@@ -185,6 +252,13 @@ namespace SevenDayRogue
 
                 }
             }
+
+            if (placeStairs)
+            {
+                AddStairs(pointList);
+            }
+
+
             for (int i = 0; i < size_x; i++)
             {
                 for (int j = 0; j < size_y; j++)
@@ -192,8 +266,12 @@ namespace SevenDayRogue
                     grid[i, j] = grid2[i, j];
                 }
             }
+
+
+           
         }
 
+        //Not called?
         public void generation()
         {
             int xi, yi, ii, jj;
@@ -247,67 +325,13 @@ namespace SevenDayRogue
 
         }
 
-        private void clearOcean(int size_x, int size_y)
-        {
-            int originX = size_x / 2;
-            int originY = 0;
-            int radius = size_x/3;
-
-            for (int i = 0; i < size_x; i++)
-            {
-                for (int j = 0; j < size_y; j++)
-                {
-                    if (dist(originX, originY, i, j * 2) < radius)
-                    {
-                        grid[i, j] = TILE_FLOOR;
-                    }
-                }
-            }
-        }
-
+      
         private double dist(int x1, int y1, int x2, int y2)
         {
             return Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
         }
 
-        //Create walls on 3 sides of the map, with width
-        private void CreateMapWalls(int size_x, int size_y, int width)
-        {
-            for (int i = 0; i < size_x; i++)
-            {
-                for (int j = 0; j < size_y; j++)
-                {
-                    if (i < (0 + width) || i > (size_x - width) || j > size_y - width)
-                    {
-                        grid[i, j] = TILE_WALL;
-                    }
-                }
-            }
-        }
-
-
-
-
-        public string printmap()
-        {
-            string retval = "";
-            for (int i = 0; i < size_x; i++)
-            {
-                for (int j = 0; j < size_y; j++)
-                {
-                    if (grid[i, j] == TILE_WALL)
-                        retval += "#";
-                    else
-                        retval += ".";
-                }
-                retval += "\r\n";
-
-            }
-
-            return retval;
-
-        }
-
+        
 
 
     }
