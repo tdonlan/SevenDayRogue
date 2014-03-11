@@ -48,9 +48,7 @@ namespace SevenDayRogue
              Position += Velocity * dx;
              Collision.HandleCollisions(level, BoundingRectangle, ref Position);
 
-          
 
-            
             if (Position.X == previousPosition.X)
                 Velocity.X = 0;
 
@@ -59,6 +57,7 @@ namespace SevenDayRogue
 
            
 
+            //Smoother collision, but doesn't allow going all the way to wall
             /*
            
             //check X
@@ -86,6 +85,19 @@ namespace SevenDayRogue
 
         private void HandleInput(GameTime gametime)
         {
+            if (level.game.gameInput.IsNewKeyPress(Keys.Space))
+            {
+                if (level.CheckAtEnd(BoundingRectangle))
+                {
+                    level.game.LevelUp();
+                }
+                else if (level.CheckAtStart(BoundingRectangle))
+                {
+                    level.game.LevelDown();
+                }
+            }
+
+
             Vector2 moveVector = new Vector2(level.game.gameInput.HMovement, level.game.gameInput.VMovement);
             if (moveVector.X != 0 && moveVector.Y != 0)
                 moveVector.Normalize();
@@ -94,6 +106,8 @@ namespace SevenDayRogue
 
             
         }
+
+        
 
      
 

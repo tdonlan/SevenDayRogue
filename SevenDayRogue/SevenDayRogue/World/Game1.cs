@@ -27,10 +27,11 @@ namespace SevenDayRogue
 
         public SpriteFont font;
 
-        public Level level;
+        public Level currentLevel;
+        public List<Tile[,]> levelTileList; //list of tilesets for all levels
+        public int levelIndex;
 
         public Random r = new Random();
-
 
         public Game1()
         {
@@ -40,6 +41,8 @@ namespace SevenDayRogue
             Content.RootDirectory = "Content";
 
             gameInput = new GameInput(this);
+
+            levelTileList = new List<Tile[,]>();
 
         }
 
@@ -71,7 +74,9 @@ namespace SevenDayRogue
             floorTexture = Content.Load<Texture2D>("floorTile3");
             font = Content.Load<SpriteFont>("font1");
 
-            level = new Level(this);
+            levelIndex = 1;
+            currentLevel = new Level(this);
+            levelTileList.Add(currentLevel.tileArray);
 
         }
 
@@ -97,9 +102,33 @@ namespace SevenDayRogue
 
             gameInput.getInput(gameTime);
             // TODO: Add your update logic here
-            level.Update(gameTime);
+            currentLevel.Update(gameTime);
 
             base.Update(gameTime);
+        }
+
+        public void LevelUp()
+        {
+            levelIndex++;
+            if (levelTileList.Count < levelIndex)
+            {
+                currentLevel = new Level(this);
+                levelTileList.Add(currentLevel.tileArray);
+            }
+            else
+            {
+                currentLevel = new Level(this, levelTileList[levelIndex - 1], true);
+            }
+        }
+
+        public void LevelDown()
+        {
+            if (levelIndex > 1)
+            {
+                levelIndex--;
+                currentLevel = new Level(this, levelTileList[levelIndex - 1], false);
+            }
+            
         }
 
         /// <summary>
@@ -112,7 +141,7 @@ namespace SevenDayRogue
 
             //spriteBatch.Begin();
 
-            level.Draw(gameTime, spriteBatch);
+            currentLevel.Draw(gameTime, spriteBatch);
 
             //spriteBatch.End();
                 

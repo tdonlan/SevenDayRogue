@@ -39,14 +39,12 @@ namespace SevenDayRogue
 
         public Player player;
 
+        //New Level constructore
         public Level(Game1 game)
         {
             this.game = game;
-
-            Vector2 startPos = new Vector2(1000, 1000);
-
-            //if (game.r.Next(2) == 0)
-                if(true)
+            Vector2 startPos = new Vector2(0,0);
+            if (game.r.Next(2) == 0)
             {
                 startPos = LoadCave();
                 //LoadMaze();
@@ -54,6 +52,29 @@ namespace SevenDayRogue
             else
             {
                startPos =  LoadBerryDungeon();
+            }
+
+             this.player = new Player(this, startPos);
+
+             LoadContent();
+        }
+
+        //Existing level constructor
+        //isUp = We went up to get to this level
+        public Level(Game1 game, Tile[,] tileArray, bool isUp)
+        {
+            this.game = game;
+            this.tileArray = tileArray;
+
+            Vector2 startPos;
+
+            if(isUp)
+            {
+                startPos = getLevelPos(TileType.StairDown);
+            }
+            else
+            {
+                startPos = getLevelPos(TileType.StairUp);
             }
 
             this.player = new Player(this, startPos);
@@ -64,6 +85,23 @@ namespace SevenDayRogue
         private void LoadContent()
         {
        
+        }
+
+        private Vector2 getLevelPos(TileType type)
+        {
+
+            Vector2 pos = new Vector2(0,0);
+             for (int i = 0; i < tileArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < tileArray.GetLength(1); j++)
+                {
+                   if( tileArray[i, j].type == type)
+                   {
+                       pos = TileHelper.GetWorldPosition(i,j);
+                   }
+                }
+            }
+            return pos;
         }
 
         //DEPRECIATED
@@ -91,8 +129,8 @@ namespace SevenDayRogue
 
             Vector2 startPos = new Vector2(1000, 1000);
 
-            int height = 50;
-            int width = 50;
+            int height = GameConstants.LevelHeight;
+            int width = GameConstants.LevelWidth;
             CellAutoCave CACave = new CellAutoCave(width, height);
 
             tileArray = new Tile[width, height];
@@ -140,8 +178,8 @@ namespace SevenDayRogue
 
         private void LoadMaze()
         {
-            int height = 50;
-            int width = 50;
+            int height = GameConstants.LevelHeight;
+            int width = GameConstants.LevelWidth;
 
           
             MazeBuilder mb = new MazeBuilder(height, width,true, 0);
@@ -179,8 +217,11 @@ namespace SevenDayRogue
 
             Vector2 startPos = new Vector2(1000,1000);
 
+            int height = GameConstants.LevelHeight;
+            int width = GameConstants.LevelWidth;
+
             Generation berryGen = new Generation();
-            berryGen.Generate(50, 50);
+            berryGen.Generate(width, height);
 
             tileArray = new Tile[berryGen.Width, berryGen.Height];
 
@@ -227,6 +268,17 @@ namespace SevenDayRogue
           
         }
 
+        public bool CheckAtStart(Rectangle boundingRec)
+        {
+            return TileHelper.CheckCollisionWithType(boundingRec, tileArray, TileType.StairDown);
+                
+        }
+
+        public bool CheckAtEnd(Rectangle boundingRec)
+        {
+            return TileHelper.CheckCollisionWithType(boundingRec, tileArray, TileType.StairUp);
+        }
+
         public bool GetCollision(int x, int y)
         {
             // Prevent escaping past the level ends.
@@ -258,7 +310,12 @@ namespace SevenDayRogue
             DrawTiles(spriteBatch);
             player.Draw(gameTime, spriteBatch);
 
+           
+
             spriteBatch.End();
+
+
+            DrawHUD(gameTime, spriteBatch);
 
         }
 
@@ -315,8 +372,11 @@ namespace SevenDayRogue
 
         private void DrawHUD(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            
+
+
             spriteBatch.Begin();
+
+            spriteBatch.DrawString(game.font, game.levelIndex.ToString(), new Vector2(20, 20), Color.Black);
 
             Color transBlack = Color.Lerp(Color.Black, Color.Transparent, .1f);
 
@@ -324,10 +384,10 @@ namespace SevenDayRogue
             Vector2 hudPOS = new Vector2(0,600);
             Rectangle HUDRec = new Rectangle((int)hudPOS.X,(int)hudPOS.Y,1280,200);
             DrawPrimitives.DrawRectangle(HUDRec, game.WhitePixel, transBlack, spriteBatch, true, 1);
-            
 
 
             spriteBatch.End();
+          
             
         }
 
