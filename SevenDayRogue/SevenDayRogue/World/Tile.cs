@@ -48,6 +48,34 @@ namespace SevenDayRogue
         }
 
 
+        //used to check if a player is on stairs, etc
+        public static bool CheckCollisionWithType(Rectangle boundingRec, Tile[,] tileArray, TileType type)
+        {
+            bool retval = false;
+
+            Rectangle bounds = boundingRec;
+            int leftTile = (int)Math.Floor((float)bounds.Left / GameConstants.TileWidth);
+            int rightTile = (int)Math.Ceiling(((float)bounds.Right / GameConstants.TileWidth)) - 1;
+            int topTile = (int)Math.Floor((float)bounds.Top / GameConstants.TileHeight);
+            int bottomTile = (int)Math.Ceiling(((float)bounds.Bottom / GameConstants.TileHeight)) - 1;
+
+
+            for (int y = topTile; y <= bottomTile; ++y)
+            {
+                for (int x = rightTile; x >= leftTile; --x)
+                {
+                    // If this tile is collidable,
+                    if (tileArray[x, y].type == type)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return retval;
+        }
+
+
         public static bool CheckCollision(Rectangle boundingRec, Tile[,] tileArray, Direction dir)
         {
             bool retval = false;
