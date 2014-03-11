@@ -44,6 +44,22 @@ namespace SevenDayRogue
             float dx = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             HandleInput(gameTime);
+
+             Position += Velocity * dx;
+             Collision.HandleCollisions(level, BoundingRectangle, ref Position);
+
+          
+
+            
+            if (Position.X == previousPosition.X)
+                Velocity.X = 0;
+
+            if (Position.Y == previousPosition.Y)
+                Velocity.Y = 0;
+
+           
+
+            /*
            
             //check X
             Vector2 newPosX = new Vector2(Position.X + Velocity.X * dx, Position.Y);
@@ -64,7 +80,7 @@ namespace SevenDayRogue
               
                 Position = newPosY;
             }
-           
+           */
              
         }
 

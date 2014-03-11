@@ -45,11 +45,9 @@ namespace SevenDayRogue
            
             
            
-            //LoadCave();
+            LoadCave();
             //LoadMaze();
-
-
-            LoadBerryDungeon();
+            //LoadBerryDungeon();
 
             this.player = new Player(this, new Vector2(1000, 1000));
 

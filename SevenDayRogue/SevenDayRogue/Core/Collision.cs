@@ -89,6 +89,7 @@ namespace SevenDayRogue
                         Position = new Vector2(Position.X, Position.Y + depth.Y);
 
                         // Perform further collisions with the new bounds.  Need to include change in position
+                        
                         bounds = new Rectangle(BoundingRectangle.X, (int)Math.Round(BoundingRectangle.Y + depth.Y), BoundingRectangle.Width, BoundingRectangle.Height);
                     }
                 }
@@ -99,7 +100,7 @@ namespace SevenDayRogue
 
                     // Perform further collisions with the new bounds.  
                     bounds = new Rectangle((int)Math.Round(BoundingRectangle.X + depth.X), BoundingRectangle.Y, BoundingRectangle.Width, BoundingRectangle.Height);
-                    //bounds = BoundingRectangle;
+                    
                 }
             }
             return bounds;
