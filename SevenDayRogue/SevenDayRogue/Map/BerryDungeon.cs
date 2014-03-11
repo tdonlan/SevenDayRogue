@@ -18,6 +18,8 @@ namespace SevenDayRogue
         public enum Type
         {
             Floor = 1,
+            Start=2,
+            End=3,
             Wall = 4,
             Stone = 20,
             None = 0
@@ -45,12 +47,9 @@ namespace SevenDayRogue
         private int[,] cost;
         private List<Point> currentPath;
 
-        // coroutine
-        //private Coroutine coroutine;
+        private bool hasStart = false;
+        private bool hasEnd = false;
 
-        // Called when the generation is complete
-        public delegate void Callback();
-        private Callback call;
 
         public Generation()
         {
@@ -66,7 +65,7 @@ namespace SevenDayRogue
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="callback">Called on generation-complete</param>
-        public void Generate(int width, int height, Callback callback)
+        public void Generate(int width, int height)
         {
             // create the empty map and an empty list of rooms
             Map = new Type[width, height];
@@ -75,7 +74,6 @@ namespace SevenDayRogue
             // fill with Wall tiles
             FillMap(Type.Wall);
 
-            call = callback;
 
             // set the min/max room size and the room count. Play around with these values
             MinRoomSize = 6;
@@ -97,7 +95,7 @@ namespace SevenDayRogue
             
             PlaceTunnels();
 
-            //call();
+        
         }
 
         /// <summary>
@@ -125,18 +123,33 @@ namespace SevenDayRogue
             // place rooms
             int placed = 0;
             int count = 0;
+            
             while (placed < RoomCount)
             {
-             
-                    if (PlaceRectRoom())
-                        placed++;
                
+
+                if (PlaceRectRoom())
+                {
+                    placed++;
+                }
+                        
 
                 // this is for debug stuff - shouldn't ever happen
                 count++;
                 if (count > 1000)
+                {
+                    
+                    //Add the end to a room randomly near the end
+                    
+
                     break;
+                }
             }
+
+            AddStart(Rooms[0]);
+            AddEnd(Rooms[r.Next(Rooms.Count - Rooms.Count / 4, Rooms.Count - 1)]);
+
+
         }
 
         /// <summary>
@@ -154,9 +167,28 @@ namespace SevenDayRogue
             {
                 Rooms.Add(room);
                 DigRoom(room);
+
                 return true;
             }
             return false;
+        }
+
+        private void AddStart(Rectangle room)
+        {
+            if (!hasStart)
+            {
+                Set(r.Next(room.X + 1, room.X + room.Width - 1), r.Next(room.Y + 1, room.Y + room.Height - 1), Type.Start);
+                hasStart = true;
+            }
+        }
+
+        private void AddEnd(Rectangle room)
+        {
+            if (!hasEnd)
+            {
+                Set(r.Next(room.X + 1, room.X + room.Width - 1), r.Next(room.Y + 1, room.Y + room.Height - 1), Type.End);
+                hasEnd = true;
+            }
         }
 
        
@@ -204,30 +236,7 @@ namespace SevenDayRogue
             }
         }
 
-        /// <summary>
-        /// Digs out the templated room (based on the given room XML)
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="room"></param>
-        public void DigRoom(int x, int y, XmlElement room)
-        {
-            Set(x, y, Width / Grid, Height / Grid, Type.Floor);
-
-            
-            XmlElement walls = room["Wall"];
-            foreach (XmlElement rect in walls)
-            {
-                Set(x + Int32.Parse(rect.GetAttribute("x")), y + Int32.Parse(rect.GetAttribute("y")), Int32.Parse(rect.GetAttribute("w")), Int32.Parse(rect.GetAttribute("h")), Type.Wall);
-            }
-
-            XmlElement stones = room["Stone"];
-            foreach (XmlElement rect in stones)
-            {
-                Set(x + Int32.Parse(rect.GetAttribute("x")), y + Int32.Parse(rect.GetAttribute("y")), Int32.Parse(rect.GetAttribute("w")), Int32.Parse(rect.GetAttribute("h")), Type.Stone);
-                //Set(x + room.x, y + room.y, room.w, room.h, Type.Stone);
-            }
-        }
+       
 
         #endregion
 

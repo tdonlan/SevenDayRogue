@@ -29,6 +29,8 @@ namespace SevenDayRogue
 
         public Level level;
 
+        public Random r = new Random();
+
 
         public Game1()
         {

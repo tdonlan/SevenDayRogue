@@ -11,6 +11,9 @@ namespace SevenDayRogue
         Stone,
         Wood,
         Door,
+        StairUp,
+        StairDown,
+
     }
 
     public enum Direction

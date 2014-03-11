@@ -42,14 +42,20 @@ namespace SevenDayRogue
         public Level(Game1 game)
         {
             this.game = game;
-           
-            
-           
-            LoadCave();
-            //LoadMaze();
-            //LoadBerryDungeon();
 
-            this.player = new Player(this, new Vector2(1000, 1000));
+            Vector2 startPos = new Vector2(1000, 1000);
+
+            if (game.r.Next(2) == -10)
+            {
+                LoadCave();
+                //LoadMaze();
+            }
+            else
+            {
+               startPos =  LoadBerryDungeon();
+            }
+
+            this.player = new Player(this, startPos);
 
             LoadContent();
         }
@@ -59,6 +65,7 @@ namespace SevenDayRogue
        
         }
 
+        //DEPRECIATED
         private void LoadLevel()
         {
             tileArray = new Tile[50, 50];
@@ -150,11 +157,13 @@ namespace SevenDayRogue
         }
 
 
-        private void LoadBerryDungeon()
+        private Vector2 LoadBerryDungeon()
         {
-         
+
+            Vector2 startPos = new Vector2(1000,1000);
+
             Generation berryGen = new Generation();
-            berryGen.Generate(100, 100, null);
+            berryGen.Generate(100, 100);
 
             tileArray = new Tile[berryGen.Width, berryGen.Height];
 
@@ -163,7 +172,9 @@ namespace SevenDayRogue
                 for (int j = 0; j < berryGen.Width; j++)
                 {
                     bool isSolid = false;
-                    if (i == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1)
+                    TileType tileType = TileType.Stone;
+
+                    if (i == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1 || j == 0)
                     {
                         isSolid = true;
                     }
@@ -174,12 +185,22 @@ namespace SevenDayRogue
                         {
                             isSolid = true;
                         }
-
+                        if (berryGen.Map[i, j] == Generation.Type.Start)
+                        {
+                            startPos = TileHelper.GetWorldPosition(i, j);
+                            tileType = TileType.StairDown;
+                        }
+                        if (berryGen.Map[i, j] == Generation.Type.End)
+                        {
+                            tileType = TileType.StairUp;
+                        }
                     }
 
-                    tileArray[i, j] = new Tile(isSolid, TileType.Stone);
+                    tileArray[i, j] = new Tile(isSolid, tileType);
                 }
             }
+
+            return startPos;
 
         }
 
@@ -257,8 +278,19 @@ namespace SevenDayRogue
             }
             else
             {
-                DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.White, spriteBatch, true, 1);
-                //spriteBatch.Draw(game.floorTexture, rec, Color.White);
+                if (t.type == TileType.StairDown)
+                {
+                    DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Orange, spriteBatch, true, 1);
+                }
+                else if (t.type == TileType.StairUp)
+                {
+                    DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Purple, spriteBatch, true, 1);
+                }
+                else
+                {
+                    DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.White, spriteBatch, true, 1);
+                }
+                  
             }
           
         }
