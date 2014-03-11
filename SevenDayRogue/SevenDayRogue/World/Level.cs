@@ -191,7 +191,24 @@ namespace SevenDayRogue
           
         }
 
-      
+        public bool GetCollision(int x, int y)
+        {
+            // Prevent escaping past the level ends.
+            if (x < 0 || x >= tileArray.GetLength(0))
+                return true;
+            // Allow jumping past the level top and falling through the bottom.
+            if (y < 0 || y >= tileArray.GetLength(1))
+                return true;
+
+            if (tileArray[x, y].isSolid)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {

@@ -13,6 +13,36 @@ namespace SevenDayRogue
 {
     public class Collision
     {
+
+        //check collision - returns true if the bounding box overlaps an impassable tile
+        //used primarily for grapple hook or other things that move the player position directly (instead of by clamped vector)
+        public static bool CheckCollision(Level level, Rectangle BoundingRectangle)
+        {
+            bool retval = false;
+
+            Rectangle bounds = BoundingRectangle;
+            int leftTile = (int)Math.Floor((float)bounds.Left / GameConstants.TileWidth);
+            int rightTile = (int)Math.Ceiling(((float)bounds.Right / GameConstants.TileWidth)) - 1;
+            int topTile = (int)Math.Floor((float)bounds.Top / GameConstants.TileHeight);
+            int bottomTile = (int)Math.Ceiling(((float)bounds.Bottom / GameConstants.TileHeight)) - 1;
+
+
+            for (int y = topTile; y <= bottomTile; ++y)
+            {
+                for (int x = rightTile; x >= leftTile; --x)
+                {
+                    // If this tile is collidable,
+                    if (level.tileArray[x, y].isSolid)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return retval;
+        }
+
+
         //Need to make sure the calculated bounds are within the array bounds
         public static void HandleCollisions(Level level, Rectangle BoundingRectangle, ref Vector2 Position)
         {
