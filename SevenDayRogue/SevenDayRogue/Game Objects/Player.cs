@@ -17,6 +17,10 @@ namespace SevenDayRogue
 
         public Vector2 Position;
         public Vector2 Velocity;
+        public Vector2 Acceleration;
+
+        public TimeSpan shootTimer;
+        public float shootTime = .25f;
 
         public Rectangle BoundingRectangle
         {
@@ -39,6 +43,11 @@ namespace SevenDayRogue
 
         public void Update(GameTime gameTime)
         {
+
+            //timers
+            shootTimer -= gameTime.ElapsedGameTime;
+
+
             Vector2 previousPosition = this.Position;
 
             float dx = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -49,12 +58,18 @@ namespace SevenDayRogue
              Collision.HandleCollisions(level, BoundingRectangle, ref Position);
 
 
-            if (Position.X == previousPosition.X)
-                Velocity.X = 0;
+             if (Position.X == previousPosition.X)
+             {
+                 Acceleration.X = 0;
+                 Velocity.X = 0;
+             }
 
-            if (Position.Y == previousPosition.Y)
-                Velocity.Y = 0;
+             if (Position.Y == previousPosition.Y)
+             {
+                 Acceleration.Y = 0;
+                 Velocity.Y = 0;
 
+             }
            
 
             //Smoother collision, but doesn't allow going all the way to wall
@@ -97,14 +112,45 @@ namespace SevenDayRogue
                 }
             }
 
+            if (level.game.gameInput.IsNewMouseButtonPress(MouseButton.LeftButton))
+            {
+                Shoot();
+            }
+
 
             Vector2 moveVector = new Vector2(level.game.gameInput.HMovement, level.game.gameInput.VMovement);
             if (moveVector.X != 0 && moveVector.Y != 0)
                 moveVector.Normalize();
-            this.Velocity = moveVector * GameConstants.playerSpeed;
+
+
+            float dx = (float)gametime.ElapsedGameTime.TotalSeconds;
+
+            this.Acceleration = moveVector;
+            
+            this.Velocity += this.Acceleration * GameConstants.playerSpeed * dx;
+
+            this.Velocity *= .8f;
+
+
+           // this.Velocity = moveVector * GameConstants.playerSpeed;
 
 
             
+        }
+
+        private void Shoot()
+        {
+            if (shootTimer < TimeSpan.Zero)
+            {
+                shootTimer = TimeSpan.FromSeconds(shootTime);
+
+
+                Vector2 dir = (level.game.gameInput.mousePos + new Vector2(level.cameraPosition,level.cameraPositionYAxis)) - Position;
+                dir.Normalize();
+
+                level.SpawnBullet(Position, dir, BulletType.Red, true);
+
+            }
         }
 
         

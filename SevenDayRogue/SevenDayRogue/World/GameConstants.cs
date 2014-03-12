@@ -13,6 +13,6 @@ namespace SevenDayRogue
         public static int TileWidth = 25;
         public static int TileHeight = 25;
 
-        public static float playerSpeed = 1000;
+        public static float playerSpeed = 10000;
     }
 }

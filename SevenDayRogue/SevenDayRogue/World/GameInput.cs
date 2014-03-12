@@ -36,8 +36,6 @@ namespace SevenDayRogue
         public float VMovement;
 
 
-
-
         public GameInput(Game1 game)
         {
             this.game = game;
@@ -67,17 +65,19 @@ namespace SevenDayRogue
 
             VMovement = currentGamePadState.ThumbSticks.Left.Y * -MoveStickScale;
 
-            if (currentKeyboardState.IsKeyDown(Keys.Down))
+            if (currentKeyboardState.IsKeyDown(Keys.Down) || currentKeyboardState.IsKeyDown(Keys.S))
                 VMovement = 1.0f;
 
-            if (currentKeyboardState.IsKeyDown(Keys.Up))
+            if (currentKeyboardState.IsKeyDown(Keys.Up) || currentKeyboardState.IsKeyDown(Keys.W))
                 VMovement = -1.0f;
 
-            if (currentKeyboardState.IsKeyDown(Keys.Left))
+            if (currentKeyboardState.IsKeyDown(Keys.Left) || currentKeyboardState.IsKeyDown(Keys.A))
                 HMovement = -1.0f;
 
-            if (currentKeyboardState.IsKeyDown(Keys.Right))
+            if (currentKeyboardState.IsKeyDown(Keys.Right) || currentKeyboardState.IsKeyDown(Keys.D))
                 HMovement = 1.0f;
+
+            mousePos = new Vector2(currentMouseState.X, currentMouseState.Y);
 
         }
 
@@ -111,6 +111,23 @@ namespace SevenDayRogue
                     LastGamePadStates.IsButtonUp(button));
 
         }
+
+        public bool IsNewMouseButtonPress(MouseButton button)
+        {
+            switch (button)
+            {
+                case MouseButton.None:
+                    return false;
+                case MouseButton.LeftButton:
+                    return (currentMouseState.LeftButton == ButtonState.Pressed && LastMouseState.LeftButton == ButtonState.Released);
+                case MouseButton.RightButton:
+                    return (currentMouseState.RightButton == ButtonState.Pressed && LastMouseState.RightButton == ButtonState.Released);
+                default:
+                    return false;
+
+            }
+        }
+
 
 
     }

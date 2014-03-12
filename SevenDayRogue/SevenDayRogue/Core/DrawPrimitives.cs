@@ -126,6 +126,12 @@ using System.Text.RegularExpressions;
             DrawPrimitives.DrawRectangle(drawRec, whitePixel, col, spriteBatch, true, 2);           
         }
 
+        public static void DrawCrossHair(SpriteBatch spriteBatch, Texture2D whitePixel, Vector2 pos, Color col)
+        {
+            drawLine(new Vector2(pos.X, pos.Y - 10), new Vector2(pos.X, pos.Y + 10), 2, whitePixel, col, spriteBatch);
+            drawLine(new Vector2(pos.X - 10, pos.Y), new Vector2(pos.X + 10, pos.Y), 2, whitePixel, col, spriteBatch);
+        }
+
         public static void DrawShadowedString(SpriteBatch spriteBatch, SpriteFont font, string value, Vector2 position, Color frontColor, Color backColor, Vector2 origin, float scale)
         {
 

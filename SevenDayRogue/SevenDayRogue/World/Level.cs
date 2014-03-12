@@ -39,6 +39,8 @@ namespace SevenDayRogue
 
         public Player player;
 
+        public List<Bullet> playerBulletList;
+
         //New Level constructore
         public Level(Game1 game)
         {
@@ -55,6 +57,7 @@ namespace SevenDayRogue
             }
 
              this.player = new Player(this, startPos);
+             this.playerBulletList = new List<Bullet>();
 
              LoadContent();
         }
@@ -79,12 +82,14 @@ namespace SevenDayRogue
 
             this.player = new Player(this, startPos);
 
+            this.playerBulletList = new List<Bullet>();
+
             LoadContent();
         }
 
         private void LoadContent()
         {
-       
+            
         }
 
         private Vector2 getLevelPos(TileType type)
@@ -174,8 +179,6 @@ namespace SevenDayRogue
 
         }
 
-
-
         private void LoadMaze()
         {
             int height = GameConstants.LevelHeight;
@@ -210,7 +213,6 @@ namespace SevenDayRogue
             }
 
         }
-
 
         private Vector2 LoadBerryDungeon()
         {
@@ -265,7 +267,16 @@ namespace SevenDayRogue
         public void Update(GameTime gameTime)
         {
             player.Update(gameTime);
-          
+
+            UpdateBullets(gameTime);
+        }
+
+        public void UpdateBullets(GameTime gameTime)
+        {
+            for (int i = playerBulletList.Count - 1; i >= 0; i--)
+            {
+                playerBulletList[i].Update(gameTime);
+            }
         }
 
         public bool CheckAtStart(Rectangle boundingRec)
@@ -298,6 +309,21 @@ namespace SevenDayRogue
             }
         }
 
+        public void SpawnBullet(Vector2 pos, Vector2 direction, BulletType type, bool isPlayer)
+        {
+            Bullet b = new Bullet(this, pos, direction, 1, 500, BulletType.Red, isPlayer);
+            playerBulletList.Add(b);
+        }
+
+        public void DespawnBullet(Bullet b)
+        {
+            if (b.isPlayers)
+            {
+                playerBulletList.Remove(b);
+            }
+
+        }
+
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             Color transBlack = Color.Lerp(Color.Black, Color.Transparent, .5f);
@@ -310,7 +336,10 @@ namespace SevenDayRogue
             DrawTiles(spriteBatch);
             player.Draw(gameTime, spriteBatch);
 
-           
+            foreach (Bullet b in playerBulletList)
+            {
+                b.Draw(gameTime, spriteBatch);
+            }
 
             spriteBatch.End();
 
@@ -384,6 +413,10 @@ namespace SevenDayRogue
             Vector2 hudPOS = new Vector2(0,600);
             Rectangle HUDRec = new Rectangle((int)hudPOS.X,(int)hudPOS.Y,1280,200);
             DrawPrimitives.DrawRectangle(HUDRec, game.WhitePixel, transBlack, spriteBatch, true, 1);
+
+
+            //crosshairs
+            DrawPrimitives.DrawCrossHair(spriteBatch, game.WhitePixel, game.gameInput.mousePos, Color.HotPink);
 
 
             spriteBatch.End();

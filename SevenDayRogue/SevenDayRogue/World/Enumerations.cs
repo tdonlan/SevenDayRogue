@@ -23,4 +23,24 @@ namespace SevenDayRogue
         Left,
         Right,
     }
+
+
+    public enum BulletType
+    {
+        Red, //damage (for burning plaque, etc)
+        Blue, //Electricity (for disabling virus, etc)
+        Green, //poison (for killing bacteria)
+        Yellow, //radiation (for killing cancer)
+        EnemyNormal,
+        EnemySeeking
+    }
+
+    public enum MouseButton
+    {
+        None,
+        LeftButton,
+        RightButton,
+        Wheel,
+    }
+
 }
