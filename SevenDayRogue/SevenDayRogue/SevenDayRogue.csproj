@@ -113,6 +113,7 @@
     <Compile Include="Core\RectangleExtensions.cs" />
     <Compile Include="Core\WordWrapper.cs" />
     <Compile Include="Game Objects\Bullet.cs" />
+    <Compile Include="Game Objects\Enemy.cs" />
     <Compile Include="Game Objects\Player.cs" />
     <Compile Include="Map\BerryDungeon.cs" />
     <Compile Include="Map\CellAutoCave.cs" />

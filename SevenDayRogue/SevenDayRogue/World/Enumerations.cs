@@ -43,4 +43,9 @@ namespace SevenDayRogue
         Wheel,
     }
 
+    public enum EnemyType
+    {
+        Grunt,
+    }
+
 }

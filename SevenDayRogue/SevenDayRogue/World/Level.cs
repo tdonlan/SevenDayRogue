@@ -21,6 +21,9 @@ namespace SevenDayRogue
         public Game1 game;
 
         public Tile[,] tileArray;
+
+        private List<Point> floorList = new List<Point>();
+
         public int Width
         {
             get { return tileArray.GetLength(0); }
@@ -40,6 +43,7 @@ namespace SevenDayRogue
         public Player player;
 
         public List<Bullet> playerBulletList;
+        public List<Enemy> enemyList;
 
         //New Level constructore
         public Level(Game1 game)
@@ -57,8 +61,7 @@ namespace SevenDayRogue
             }
 
              this.player = new Player(this, startPos);
-             this.playerBulletList = new List<Bullet>();
-
+           
              LoadContent();
         }
 
@@ -82,16 +85,20 @@ namespace SevenDayRogue
 
             this.player = new Player(this, startPos);
 
-            this.playerBulletList = new List<Bullet>();
+           
 
             LoadContent();
         }
 
         private void LoadContent()
         {
-            
+            this.playerBulletList = new List<Bullet>();
+            this.enemyList = new List<Enemy>();
+            SpawnEnemies();
         }
 
+        
+        //return where a certain tile type is (start / end)
         private Vector2 getLevelPos(TileType type)
         {
 
@@ -109,26 +116,7 @@ namespace SevenDayRogue
             return pos;
         }
 
-        //DEPRECIATED
-        private void LoadLevel()
-        {
-            tileArray = new Tile[50, 50];
-            for (int i = 0; i < tileArray.GetLength(0); i++)
-            {
-                for (int j = 0; j < tileArray.GetLength(1); j++)
-                {
-                    bool isSolid = false;
-                    if (i == 0 || i == tileArray.GetLength(0) - 1 || j == 0 || j == tileArray.GetLength(1) - 1)
-                        isSolid = true;
-
-                    if (i % 4 == 0 && j % 4 == 0)
-                        isSolid = true;
-
-                    tileArray[i, j] = new Tile(isSolid, TileType.Stone);
-                }
-            }
-        }
-
+       
         private Vector2 LoadCave()
         {
 
@@ -167,6 +155,10 @@ namespace SevenDayRogue
                         {
                             tileType = TileType.StairUp;
                         }
+                        else
+                        {
+                            floorList.Add(new Point(i, j));
+                        }
                        
                     }
 
@@ -204,6 +196,10 @@ namespace SevenDayRogue
                         if (mb.maze[i, j] == '#')
                         {
                             isSolid = true;
+                        }
+                        else
+                        {
+                            floorList.Add(new Point(i, j));
                         }
 
                     }
@@ -245,15 +241,20 @@ namespace SevenDayRogue
                         {
                             isSolid = true;
                         }
-                        if (berryGen.Map[i, j] == Generation.Type.Start)
+                        else if (berryGen.Map[i, j] == Generation.Type.Start)
                         {
                             startPos = TileHelper.GetWorldPosition(i, j);
                             tileType = TileType.StairDown;
                         }
-                        if (berryGen.Map[i, j] == Generation.Type.End)
+                        else if (berryGen.Map[i, j] == Generation.Type.End)
                         {
                             tileType = TileType.StairUp;
                         }
+                        else
+                        {
+                            floorList.Add(new Point(i, j));
+                        }
+                        
                     }
 
                     tileArray[i, j] = new Tile(isSolid, tileType);
@@ -263,6 +264,8 @@ namespace SevenDayRogue
             return startPos;
 
         }
+
+        
 
         public void Update(GameTime gameTime)
         {
@@ -276,6 +279,14 @@ namespace SevenDayRogue
             for (int i = playerBulletList.Count - 1; i >= 0; i--)
             {
                 playerBulletList[i].Update(gameTime);
+            }
+        }
+
+        public void UpdateEnemies(GameTime gameTime)
+        {
+            for (int i = enemyList.Count - 1; i >= 0; i--)
+            {
+                enemyList[i].Update(gameTime);
             }
         }
 
@@ -309,9 +320,42 @@ namespace SevenDayRogue
             }
         }
 
+        //Initial spawning of enemies in a level
+        public void SpawnEnemies()
+        {
+            int enemyCount = (int)Math.Round(floorList.Count * GameConstants.enemyPercent);
+          
+            for (int i = 0; i < enemyCount; i++)
+            {
+                SpawnEnemy(popRandomFloorPoint(), EnemyType.Grunt);
+            }
+        }
+
+        //gets a random floor point (used for spawning stuff) and removes it from the list
+        private Vector2 popRandomFloorPoint()
+        {
+            Point p = floorList[game.r.Next(floorList.Count - 1)];
+            floorList.Remove(p);
+
+            return TileHelper.GetWorldPosition(p.X, p.Y);
+           
+
+        }
+
+        public void SpawnEnemy(Vector2 pos, EnemyType type)
+        {
+            Enemy e = new Enemy(this, pos, type, 10, 10);
+            enemyList.Add(e);
+        }
+
+        public void DespawnEnemy(Enemy e)
+        {
+            enemyList.Remove(e);
+        }
+
         public void SpawnBullet(Vector2 pos, Vector2 direction, BulletType type, bool isPlayer)
         {
-            Bullet b = new Bullet(this, pos, direction, 1, 500, BulletType.Red, isPlayer);
+            Bullet b = new Bullet(this, pos, direction, 1, 750, BulletType.Red, isPlayer);
             playerBulletList.Add(b);
         }
 
@@ -336,10 +380,16 @@ namespace SevenDayRogue
             DrawTiles(spriteBatch);
             player.Draw(gameTime, spriteBatch);
 
+            foreach (Enemy e in enemyList)
+            {
+                e.Draw(gameTime, spriteBatch);
+            }
+
             foreach (Bullet b in playerBulletList)
             {
                 b.Draw(gameTime, spriteBatch);
             }
+            
 
             spriteBatch.End();
 
@@ -376,7 +426,7 @@ namespace SevenDayRogue
             Rectangle rec = TileHelper.GetTileRectangle(x, y);
             if (t.isSolid)
             {
-                DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Red, spriteBatch, true, 1);
+                DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Gray, spriteBatch, true, 1);
                 //spriteBatch.Draw(game.wallTexture, rec, Color.White);
             }
             else
@@ -412,7 +462,7 @@ namespace SevenDayRogue
 
             Vector2 hudPOS = new Vector2(0,600);
             Rectangle HUDRec = new Rectangle((int)hudPOS.X,(int)hudPOS.Y,1280,200);
-            DrawPrimitives.DrawRectangle(HUDRec, game.WhitePixel, transBlack, spriteBatch, true, 1);
+            //DrawPrimitives.DrawRectangle(HUDRec, game.WhitePixel, transBlack, spriteBatch, true, 1);
 
 
             //crosshairs

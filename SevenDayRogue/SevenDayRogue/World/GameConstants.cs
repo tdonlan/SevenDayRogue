@@ -14,5 +14,7 @@ namespace SevenDayRogue
         public static int TileHeight = 25;
 
         public static float playerSpeed = 10000;
+
+        public static float enemyPercent = .005f;  //percent that an enemy will be in a floor square
     }
 }

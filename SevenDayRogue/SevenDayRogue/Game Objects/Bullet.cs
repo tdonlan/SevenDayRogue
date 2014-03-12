@@ -34,7 +34,7 @@ namespace SevenDayRogue
         {
             get
             {
-                return new Rectangle((int)Position.X - 2, (int)Position.Y - 2, 4, 4);
+                return new Rectangle((int)Position.X - 4, (int)Position.Y - 4, 8, 8);
             }
         }
 
