@@ -118,7 +118,6 @@ namespace SevenDayRogue
                     HitTimer = TimeSpan.FromSeconds(HitTime);
                     this.hp -= dmg;
         
-
                     if (hp <= 0)
                     {
                         Kill(bulletType, isExplosion);

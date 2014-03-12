@@ -272,13 +272,21 @@ namespace SevenDayRogue
             player.Update(gameTime);
 
             UpdateBullets(gameTime);
+            UpdateEnemies(gameTime);
         }
 
         public void UpdateBullets(GameTime gameTime)
         {
             for (int i = playerBulletList.Count - 1; i >= 0; i--)
             {
-                playerBulletList[i].Update(gameTime);
+                if (isOnScreen(playerBulletList[i].BoundingRectangle))
+                {
+                    playerBulletList[i].Update(gameTime);
+                }
+                else
+                {
+                    DespawnBullet(playerBulletList[i]);
+                }
             }
         }
 
@@ -286,7 +294,10 @@ namespace SevenDayRogue
         {
             for (int i = enemyList.Count - 1; i >= 0; i--)
             {
-                enemyList[i].Update(gameTime);
+                if (isOnScreen(enemyList[i].BoundingRectangle))
+                {
+                    enemyList[i].Update(gameTime);
+                }
             }
         }
 
@@ -300,6 +311,23 @@ namespace SevenDayRogue
         {
             return TileHelper.CheckCollisionWithType(boundingRec, tileArray, TileType.StairUp);
         }
+
+
+        public bool isOnScreen(Rectangle rec)
+        {
+            int left = (int)Math.Floor(cameraPosition);
+            int right = left + viewWidth;
+
+            int top = (int)Math.Floor(cameraPositionYAxis);
+            int bottom = top + viewHeight;
+
+            if (((rec.Left) >= left && (rec.Right) <= right) &&
+                ((rec.Top) >= top && (rec.Bottom) <= bottom))
+                return true;
+            else
+                return false;
+        }
+
 
         public bool GetCollision(int x, int y)
         {
@@ -355,7 +383,7 @@ namespace SevenDayRogue
 
         public void SpawnBullet(Vector2 pos, Vector2 direction, BulletType type, bool isPlayer)
         {
-            Bullet b = new Bullet(this, pos, direction, 1, 750, BulletType.Red, isPlayer);
+            Bullet b = new Bullet(this, pos, direction, 10, 750, BulletType.Red, isPlayer);
             playerBulletList.Add(b);
         }
 

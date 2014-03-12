@@ -66,6 +66,17 @@ namespace SevenDayRogue
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Position += new Vector2(Direction.X * speed * elapsed, Direction.Y * speed * elapsed);
 
+            //check if we shoot enemy
+            for(int i=level.enemyList.Count-1;i>=0;i--)
+            {
+                if (level.enemyList[i].BoundingRectangle.Intersects(BoundingRectangle))
+                {
+                    
+                    level.enemyList[i].Hit(type, damage, false);
+                    level.DespawnBullet(this);
+                }
+            }
+
             //check if we've gone off the screen
 
             Vector2 tilePos =  TileHelper.GetTilePosition(Position);
