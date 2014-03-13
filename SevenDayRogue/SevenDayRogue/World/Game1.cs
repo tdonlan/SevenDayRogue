@@ -22,6 +22,8 @@ namespace SevenDayRogue
         public Texture2D WhitePixel;
         public Texture2D wallTexture;
         public Texture2D floorTexture;
+        public Texture2D playerTexture;
+        public Texture2D guardTexture;
 
         public GameInput gameInput;
 
@@ -73,6 +75,9 @@ namespace SevenDayRogue
             wallTexture = Content.Load<Texture2D>("wallTile3");
             floorTexture = Content.Load<Texture2D>("floorTile3");
             font = Content.Load<SpriteFont>("font1");
+
+            playerTexture = Content.Load<Texture2D>("player");
+            guardTexture = Content.Load<Texture2D>("Guard1");
 
             levelIndex = 1;
             currentLevel = new Level(this);

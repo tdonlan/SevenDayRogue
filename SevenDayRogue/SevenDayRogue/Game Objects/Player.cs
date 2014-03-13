@@ -22,6 +22,17 @@ namespace SevenDayRogue
         public TimeSpan shootTimer;
         public float shootTime = .25f;
 
+        public int totalHP;
+        public int HP;
+
+        public TimeSpan hitTimer;
+        public float hitTime = 1f;
+
+        public Texture2D texture;
+        public Vector2 origin;
+        public float rotation;
+
+
         public Rectangle BoundingRectangle
         {
             get
@@ -39,13 +50,25 @@ namespace SevenDayRogue
         {
             this.level = level;
             this.Position = position;
+
+            LoadContent();
         }
+
+        public void LoadContent()
+        {
+            texture = level.game.playerTexture;
+            origin = new Vector2(texture.Width / 2, texture.Height / 2);
+            rotation = 0;
+        }
+
+
 
         public void Update(GameTime gameTime)
         {
 
             //timers
             shootTimer -= gameTime.ElapsedGameTime;
+            hitTimer -= gameTime.ElapsedGameTime;
 
 
             Vector2 previousPosition = this.Position;
@@ -131,11 +154,7 @@ namespace SevenDayRogue
 
             this.Velocity *= .8f;
 
-
-           // this.Velocity = moveVector * GameConstants.playerSpeed;
-
-
-            
+            this.rotation = (float)Math.Atan2((double)Velocity.Y, (double)Velocity.X);
         }
 
         private void Shoot()
@@ -153,16 +172,34 @@ namespace SevenDayRogue
             }
         }
 
-        
+        public void Hit(int dmg)
+        {
+            if (hitTimer <= TimeSpan.Zero)
+            {
+                hitTimer = TimeSpan.FromSeconds(hitTime);
 
-     
+                HP -= dmg;
+                if (HP <= 0)
+                {
+                    Die();
+                }
+            }
+        }
+
+        public void Die()
+        {
+            //restart the game, show death screen, etc
+        }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.WhitePixel, Color.Pink, spriteBatch, true, 1);
-            DrawPrimitives.DrawRectangle(new Rectangle((int)Position.X,(int)Position.Y,5,5) , level.game.WhitePixel, Color.Red, spriteBatch, true, 1);
+            //DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.WhitePixel, Color.Pink, spriteBatch, true, 1);
+            //DrawPrimitives.DrawRectangle(new Rectangle((int)Position.X,(int)Position.Y,5,5) , level.game.WhitePixel, Color.Red, spriteBatch, true, 1);
 
             spriteBatch.DrawString(level.game.font, Position.X + "," + Position.Y, new Vector2(BoundingRectangle.Center.X, BoundingRectangle.Center.Y), Color.Black);
+
+            //spriteBatch.Draw(level.game.playerTexture, Position, Color.White);
+            spriteBatch.Draw(texture, Position, null, Color.White, rotation, origin, 1f, SpriteEffects.None, 0);
         }
 
     }

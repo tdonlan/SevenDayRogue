@@ -20,6 +20,8 @@ namespace SevenDayRogue
 
         public Texture2D texture; //sprite?
         public Vector2 origin;
+        public float rotation;
+   
 
         public int TotalHP;
         public int hp;
@@ -29,8 +31,6 @@ namespace SevenDayRogue
 
         public int dmg; //dmg inflicted by crashing into player
 
-        public float rotationAmt;
-        public float rotation = 0f;
 
         public TimeSpan HitTimer;
         public float HitTime = .1f;
@@ -68,7 +68,7 @@ namespace SevenDayRogue
 
             score = 1;
 
-            rotationAmt = (float)level.game.r.NextDouble() - .5f;
+           
 
             LoadContent();
 
@@ -78,14 +78,14 @@ namespace SevenDayRogue
         private void LoadContent()
         {
           
-            texture = level.game.WhitePixel;
+            texture = level.game.guardTexture;
 
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
         }
 
         public void Update(GameTime gameTime)
         {
-            rotation += rotationAmt * (float)gameTime.ElapsedGameTime.TotalSeconds;
+         
             HitTimer -= gameTime.ElapsedGameTime;
 
             float dx = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -141,7 +141,11 @@ namespace SevenDayRogue
    
             //spriteBatch.Draw(texture, Position, null, c, rotation, origin, 1f, SpriteEffects.None, 1);
             DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.WhitePixel, Color.Red, spriteBatch, true, 1);
-            // DrawPrimitives.DrawCircle(BoundingCircle, level.game.WhitePixel, Color.Indigo, spriteBatch);
+         
+
+            //spriteBatch.Draw(level.game.guardTexture, Position, Color.White);
+
+            spriteBatch.Draw(texture, Position, null, Color.White, rotation, origin, 1f, SpriteEffects.None, 0);
         }
 
 
