@@ -352,6 +352,8 @@ namespace SevenDayRogue
         public void SpawnEnemies()
         {
             int enemyCount = (int)Math.Round(floorList.Count * GameConstants.enemyPercent);
+
+    
           
             for (int i = 0; i < enemyCount; i++)
             {
@@ -469,7 +471,9 @@ namespace SevenDayRogue
                 }
                 else
                 {
+
                     DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.White, spriteBatch, true, 1);
+                    DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Black, spriteBatch, false, 1);
                 }
                   
             }

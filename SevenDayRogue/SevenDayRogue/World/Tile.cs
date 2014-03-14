@@ -31,7 +31,8 @@ namespace SevenDayRogue
         //get the world position (center) of the tile
         public static Vector2 GetWorldPosition(int x, int y)
         {
-            return new Vector2(x * GameConstants.TileWidth + 25, y * GameConstants.TileHeight + 25);
+            
+            return new Vector2(x * GameConstants.TileWidth + (GameConstants.TileWidth/2), y * GameConstants.TileHeight + (GameConstants.TileHeight/2));
         }
 
         //get the tile position that overlaps the world position
