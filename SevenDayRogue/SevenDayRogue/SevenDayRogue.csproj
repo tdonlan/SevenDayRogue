@@ -110,6 +110,7 @@
     <Compile Include="Core\Circle.cs" />
     <Compile Include="Core\Collision.cs" />
     <Compile Include="Core\DrawPrimitives.cs" />
+    <Compile Include="Core\PathFinder.cs" />
     <Compile Include="Core\RectangleExtensions.cs" />
     <Compile Include="Core\WordWrapper.cs" />
     <Compile Include="Game Objects\Bullet.cs" />

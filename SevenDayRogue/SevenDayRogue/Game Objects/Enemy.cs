@@ -18,7 +18,7 @@ namespace SevenDayRogue
         public Vector2 Position;
 
         public Vector2 Direction;
-        public float speed = 25;
+        public float speed = 50;
            
         public Vector2 Velocity;
 
@@ -27,7 +27,6 @@ namespace SevenDayRogue
         public float rotation;
 
         public Vector2 curTileVector;
-   
 
         public int TotalHP;
         public int hp;
@@ -52,7 +51,7 @@ namespace SevenDayRogue
             get
             {
                 return new Rectangle((int)Position.X - 13, (int)Position.Y - 13, 25, 25);
-                //return new Rectangle((int)(Position.X - origin.X), (int)(Position.Y - origin.X), (int)texture.Width, (int)texture.Height);
+             
             }
         }
 
@@ -82,7 +81,8 @@ namespace SevenDayRogue
 
             c = Color.Red;
 
-            setWaypointList();
+            //setWaypointSquare();
+            setWaypointChasePlayer();
         }
 
         private void LoadContent()
@@ -113,7 +113,7 @@ namespace SevenDayRogue
         }
 
         //make a simple square waypoint list
-        private void setWaypointList()
+        private void setWaypointSquare()
         {
             isWaypointLooping = true;
             //starting tile
@@ -122,6 +122,18 @@ namespace SevenDayRogue
              waypointList.Add(new Point((int)curTileVector.X, (int)curTileVector.Y - 2));
              waypointList.Add(new Point((int)curTileVector.X+2, (int)curTileVector.Y - 2));
              waypointList.Add(new Point((int)curTileVector.X+2, (int)curTileVector.Y));
+        }
+
+        //use A* to go after the player
+        //need to keep calling during update
+        private void setWaypointChasePlayer()
+        {
+            isWaypointLooping = false;
+            Vector2 enemyTilePos = TileHelper.GetTilePosition(Position);
+            Vector2 playertilePos = TileHelper.GetTilePosition(level.player.Position);
+            waypointList = PathFinder.Pathfind(level, (int)enemyTilePos.X, (int)enemyTilePos.Y, (int)playertilePos.X, (int)playertilePos.Y);
+
+            waypointIndex = 0;
         }
 
         private void UpdateWaypoint()
@@ -137,8 +149,9 @@ namespace SevenDayRogue
                 {
                     waypointIndex = 0;
                 }
-                if (waypointIndex > waypointList.Count)
+                if (waypointIndex >= waypointList.Count)
                 {
+                    waypointIndex--;
                     Direction = new Vector2(0, 0);
                     Velocity = new Vector2(0, 0);
                     return;
@@ -149,28 +162,11 @@ namespace SevenDayRogue
             Direction.Normalize();
             Velocity = Direction * speed;
 
-            /*
-
-            //direction = current position - world vector of waypoint tile
-            Vector2 dest = TileHelper.GetWorldPosition(waypointList[waypointIndex].X, waypointList[waypointIndex].Y);
-
-            Direction = dest - (Position);
-            Direction.Normalize();
-            Velocity = Direction * speed;
-             * */
-          
-
         }
 
-       
-
-
         private void Kill(BulletType bulletType, bool isExplosion)
-        {
-            
-
+        {      
             level.DespawnEnemy(this);
-
         }
 
 
