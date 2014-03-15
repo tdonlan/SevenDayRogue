@@ -18,7 +18,7 @@ namespace SevenDayRogue
         public Vector2 Position;
 
         public Vector2 Direction;
-        public float speed = 100;
+        public float speed = 25;
            
         public Vector2 Velocity;
 
@@ -202,7 +202,7 @@ namespace SevenDayRogue
         {
             //destination
             Vector2 dest = TileHelper.GetWorldPosition(waypointList[waypointIndex].X,waypointList[waypointIndex].Y);
-            Rectangle destRect = new Rectangle((int)dest.X-13, (int)dest.Y-13, 25, 25);
+            Rectangle destRect = new Rectangle((int)dest.X, (int)dest.Y, 25, 25);
             DrawPrimitives.DrawRectangle(destRect, level.game.WhitePixel, Color.Yellow, spriteBatch, true, 1);
 
 
@@ -216,6 +216,7 @@ namespace SevenDayRogue
 
             //position location
             DrawPrimitives.DrawRectangle(new Rectangle((int)Position.X, (int)Position.Y, 2, 2), level.game.WhitePixel, Color.White, spriteBatch, true, 1);
+
         }
 
 

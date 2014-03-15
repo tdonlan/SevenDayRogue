@@ -31,15 +31,15 @@ namespace SevenDayRogue
         //get the world position (center) of the tile
         public static Vector2 GetWorldPosition(int x, int y)
         {
-            
-            return new Vector2(x * GameConstants.TileWidth + (GameConstants.TileWidth/2), y * GameConstants.TileHeight + (GameConstants.TileHeight/2));
+            //return new Vector2(x * GameConstants.TileWidth + (GameConstants.TileWidth/2), y * GameConstants.TileHeight + (GameConstants.TileHeight/2));
+            return new Vector2(x * GameConstants.TileWidth, y * GameConstants.TileHeight );
         }
 
         //get the tile position that overlaps the world position
         public static Vector2 GetTilePosition(Vector2 position)
         {
-            int x = (int)Math.Round(position.X / GameConstants.TileWidth);
-            int y = (int)Math.Round(position.Y / GameConstants.TileHeight);
+            int x = (int)Math.Floor(position.X / GameConstants.TileWidth);
+            int y = (int)Math.Floor(position.Y / GameConstants.TileHeight);
             return new Vector2(x, y);
         }
 

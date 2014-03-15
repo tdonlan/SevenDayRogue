@@ -50,6 +50,10 @@ namespace SevenDayRogue
         {
             this.game = game;
             Vector2 startPos = new Vector2(0,0);
+
+            startPos = LoadArena();
+
+            /*
             if (game.r.Next(2) == 0)
             {
                 startPos = LoadCave();
@@ -59,6 +63,7 @@ namespace SevenDayRogue
             {
                startPos =  LoadBerryDungeon();
             }
+             * */
 
              this.player = new Player(this, startPos);
            
@@ -114,6 +119,41 @@ namespace SevenDayRogue
                 }
             }
             return pos;
+        }
+
+        private Vector2 LoadArena()
+        {
+
+            int height = 20;
+            int width = 20;
+
+            Vector2 startPos = new Vector2(width / 2 * GameConstants.TileWidth, height / 2 * GameConstants.TileHeight);
+
+            tileArray = new Tile[width, height];
+
+            for (int i = 0; i < tileArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < tileArray.GetLength(1); j++)
+                {
+                    bool isSolid = false;
+                    TileType tileType = TileType.Stone;
+
+                    if (i == 0 || j == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1)
+                    {
+                        isSolid = true;
+                    }
+                    else
+                    {
+                        floorList.Add(new Point(i, j));
+                        isSolid = false;
+                    }
+
+
+                    tileArray[i, j] = new Tile(isSolid, tileType);
+                }
+            }
+
+            return startPos;
         }
 
        
