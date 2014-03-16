@@ -76,7 +76,29 @@ namespace SevenDayRogue
             return retval;
         }
 
+        //return a list of all floor tiles within the rectangle of the level
+        //rectangle is in tile coordinates
+        public static List<Point> getFloorList(Level level, Rectangle rec)
+        {
+            List<Point> pointList = new List<Point>();
+            for(int x=rec.X;x<rec.X+rec.Width;x++)
+            {
+                for (int y = rec.Y; y < rec.Y + rec.Height; y++)
+                {
+                    if (!level.GetCollision(x, y))
+                    {
+                        pointList.Add(new Point(x, y));
+                    }
+                }
 
+            }
+
+            return pointList;
+
+        }
+
+
+        //DEPRECIATED?  
         public static bool CheckCollision(Rectangle boundingRec, Tile[,] tileArray, Direction dir)
         {
             bool retval = false;

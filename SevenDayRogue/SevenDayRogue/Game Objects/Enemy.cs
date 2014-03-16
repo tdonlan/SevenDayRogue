@@ -79,7 +79,9 @@ namespace SevenDayRogue
             c = Color.Red;
 
             //setWaypointSquare();
-            setWaypointSeekPlayer();
+            //setWaypointSeekPlayer();
+            //setWaypointSmallPatrol();
+            setWaypointLargePatrol();
         }
 
         private void LoadContent()
@@ -94,9 +96,9 @@ namespace SevenDayRogue
         {
             if (isActive)
             {
-                //UpdateWaypoint();
+                UpdateWaypoint();
                 //UpdateSeekPlayer();
-                UpdateSeekPlayerAggressive();
+                //UpdateSeekPlayerAggressive();
 
                 HitTimer -= gameTime.ElapsedGameTime;
 
@@ -130,6 +132,49 @@ namespace SevenDayRogue
              waypointList.Add(new Point((int)curTileVector.X+2, (int)curTileVector.Y));
         }
 
+
+        private void setWaypointSmallPatrol()
+        {
+            //pick a random space nearby, use A* to get there and back.
+            Vector2 tilePos = TileHelper.GetTilePosition(Position);
+            List<Point> floorList = TileHelper.getFloorList(level, new Rectangle((int)tilePos.X - 5, (int)tilePos.Y - 5, 10, 10));
+
+            Point randPt = floorList[level.game.r.Next(floorList.Count - 1)];
+
+            List<Point> ptList1 = PathFinder.Pathfind(level, (int)tilePos.X, (int)tilePos.Y, randPt.X, randPt.Y);
+
+            waypointIndex = 0;
+            isWaypointLooping = true;
+            waypointList.AddRange(ptList1);
+            ptList1.Reverse();
+            waypointList.AddRange(ptList1);
+        }
+
+        private void setWaypointLargePatrol()
+        {
+
+            waypointIndex = 0;
+            isWaypointLooping = true;
+
+            //pick 2-5 points medium distance, use A* to traverse them.
+            Vector2 tilePos = TileHelper.GetTilePosition(Position);
+            List<Point> floorList = TileHelper.getFloorList(level, new Rectangle((int)tilePos.X - 15, (int)tilePos.Y - 15, 30, 30));
+
+            Point endPt = new Point((int)tilePos.X, (int)tilePos.Y);
+            Point curPt = endPt;
+            for (int i = 0; i < level.game.r.Next(5); i++)
+            {
+                Point newPt = floorList[level.game.r.Next(floorList.Count - 1)];
+                List<Point> ptList1 = PathFinder.Pathfind(level, curPt.X, curPt.Y, newPt.X, newPt.Y);
+                waypointList.AddRange(ptList1);
+                curPt = newPt;
+            }
+
+            List<Point> ptList2 = PathFinder.Pathfind(level, curPt.X, curPt.Y, endPt.X, endPt.Y);
+            waypointList.AddRange(ptList2);
+
+        }
+
         //use A* to go after the player
         //need to keep calling during update
         private void setWaypointSeekPlayer()
@@ -155,7 +200,7 @@ namespace SevenDayRogue
                 {
                     waypointIndex = 0;
                 }
-                if (waypointIndex >= waypointList.Count)
+                else if (waypointIndex >= waypointList.Count)
                 {
                     waypointIndex--;
                     Direction = new Vector2(0, 0);
@@ -165,7 +210,10 @@ namespace SevenDayRogue
             }
 
             Direction = new Vector2(waypointList[waypointIndex].X,waypointList[waypointIndex].Y) - curTileVector;
-            Direction.Normalize();
+            if (Direction.X != 0 && Direction.Y != 0)
+            {
+                Direction.Normalize();
+            }
             Velocity = Direction * speed;
 
         }
