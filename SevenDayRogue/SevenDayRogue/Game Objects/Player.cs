@@ -20,7 +20,7 @@ namespace SevenDayRogue
         public Vector2 Acceleration;
 
         public TimeSpan shootTimer;
-        public float shootTime = .25f;
+        public float shootTime = .1f;
 
         public int totalHP;
         public int HP;

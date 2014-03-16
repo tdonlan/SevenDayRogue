@@ -43,9 +43,23 @@ namespace SevenDayRogue
         Wheel,
     }
 
-    public enum EnemyType
+    public enum EnemyMoveType
     {
-        Grunt,
+        Static,
+        SmallPatrol,
+        LargePatrol,
+        SeekPlayer,
+        LineOfSight,
     }
+
+    public enum EnemyShootType
+    {
+        RandomTimer,
+        Sniper,
+        Spray,
+
+    }
+
+
 
 }

@@ -51,9 +51,9 @@ namespace SevenDayRogue
             this.game = game;
             Vector2 startPos = new Vector2(0,0);
 
-            startPos = LoadArena();
+            //startPos = LoadArena();
 
-            /*
+            
             if (game.r.Next(2) == 0)
             {
                 startPos = LoadCave();
@@ -63,7 +63,7 @@ namespace SevenDayRogue
             {
                startPos =  LoadBerryDungeon();
             }
-             * */
+             
 
              this.player = new Player(this, startPos);
            
@@ -393,11 +393,9 @@ namespace SevenDayRogue
         {
             int enemyCount = (int)Math.Round(floorList.Count * GameConstants.enemyPercent);
 
-    
-          
             for (int i = 0; i < enemyCount; i++)
             {
-                SpawnEnemy(popRandomFloorPoint(), EnemyType.Grunt);
+                SpawnEnemy(popRandomFloorPoint(), EnemyMoveType.SeekPlayer,EnemyShootType.RandomTimer);
             }
         }
 
@@ -412,9 +410,9 @@ namespace SevenDayRogue
 
         }
 
-        public void SpawnEnemy(Vector2 pos, EnemyType type)
+        public void SpawnEnemy(Vector2 pos, EnemyMoveType moveType, EnemyShootType shootType)
         {
-            Enemy e = new Enemy(this, pos, type, 10, 10);
+            Enemy e = new Enemy(this, pos, moveType, shootType, 10, 10);
             enemyList.Add(e);
         }
 

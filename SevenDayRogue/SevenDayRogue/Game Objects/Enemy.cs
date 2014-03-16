@@ -32,7 +32,9 @@ namespace SevenDayRogue
         public int hp;
         public int score;
 
-        public EnemyType enemyType;
+      
+        public EnemyMoveType moveType;
+        public EnemyShootType shootType;
 
         public int dmg; //dmg inflicted by crashing into player
 
@@ -55,19 +57,14 @@ namespace SevenDayRogue
             }
         }
 
-        public Circle BoundingCircle
-        {
-            get
-            {
-                return new Circle(Position, texture.Width / 3);
-            }
-        }
 
-        public Enemy(Level level, Vector2 position, EnemyType type, int hp, int dmg)
+
+        public Enemy(Level level, Vector2 position, EnemyMoveType moveType, EnemyShootType shootType, int hp, int dmg)
         {
             this.level = level;
             this.Position = position;
-            this.enemyType = type;
+            this.moveType = moveType;
+            this.shootType = shootType;
            
             this.TotalHP = hp;
             this.hp = TotalHP;
@@ -82,7 +79,7 @@ namespace SevenDayRogue
             c = Color.Red;
 
             //setWaypointSquare();
-            setWaypointChasePlayer();
+            setWaypointSeekPlayer();
         }
 
         private void LoadContent()
@@ -96,7 +93,9 @@ namespace SevenDayRogue
         public void Update(GameTime gameTime)
         {
 
-            UpdateWaypoint();
+            //UpdateWaypoint();
+            //UpdateSeekPlayer();
+            UpdateSeekPlayerAggressive();
 
             HitTimer -= gameTime.ElapsedGameTime;
 
@@ -126,7 +125,7 @@ namespace SevenDayRogue
 
         //use A* to go after the player
         //need to keep calling during update
-        private void setWaypointChasePlayer()
+        private void setWaypointSeekPlayer()
         {
             isWaypointLooping = false;
             Vector2 enemyTilePos = TileHelper.GetTilePosition(Position);
@@ -162,6 +161,61 @@ namespace SevenDayRogue
             Direction.Normalize();
             Velocity = Direction * speed;
 
+        }
+
+
+        //follow waypoints.  When we get to end, seek the player again.
+        private void UpdateSeekPlayer()
+        {
+            //check if we are at a waypoint
+            curTileVector = TileHelper.GetTilePosition(Position);
+            Point curTile = new Point((int)curTileVector.X, (int)curTileVector.Y);
+
+            if (curTile == waypointList[waypointIndex])
+            {
+                waypointIndex++;
+                if ( waypointIndex >= waypointList.Count)
+                {
+                    waypointIndex = 0;
+                    setWaypointSeekPlayer();
+                    return;
+                }
+            }
+
+            Direction = new Vector2(waypointList[waypointIndex].X, waypointList[waypointIndex].Y) - curTileVector;
+            Direction.Normalize();
+            Velocity = Direction * speed;
+        }
+
+        private void UpdateSeekPlayerAggressive()
+        {
+            //check if we are at a waypoint
+            curTileVector = TileHelper.GetTilePosition(Position);
+            Point curTile = new Point((int)curTileVector.X, (int)curTileVector.Y);
+
+            Vector2 playertilePos = TileHelper.GetTilePosition(level.player.Position);
+            Point playertilePoint = new Point((int)playertilePos.X, (int)playertilePos.Y);
+            if (playertilePoint != waypointList[waypointList.Count-1])
+            {
+                waypointIndex = 0;
+                setWaypointSeekPlayer();
+                return;
+            }
+
+            if (curTile == waypointList[waypointIndex])
+            {
+                waypointIndex++;
+                if (waypointIndex >= waypointList.Count)
+                {
+                    waypointIndex = 0;
+                    setWaypointSeekPlayer();
+                    return;
+                }
+            }
+
+            Direction = new Vector2(waypointList[waypointIndex].X, waypointList[waypointIndex].Y) - curTileVector;
+            Direction.Normalize();
+            Velocity = Direction * speed;
         }
 
         private void Kill(BulletType bulletType, bool isExplosion)

@@ -124,7 +124,7 @@ namespace SevenDayRogue
         {
             if (t.isSolid)
             {
-                return 2;
+                return 99;
             }
             else
             {
