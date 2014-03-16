@@ -106,6 +106,68 @@ namespace SevenDayRogue
             return bounds;
         }
 
+        public static bool getLOS(Level level, Vector2 vec1, Vector2 vec2, ref Vector2 vecLOS)
+        {
+            bool retval = true;
+            //check if both vecs are on screen?
+
+            //get resultant vector
+            vecLOS = vec2 - vec1;
+            //reduce by greatest common denom
+            vecLOS.Normalize();
+            Vector2 pos = vec1;
+
+            //get a list of tile coords.  traverse the list and check for collision
+
+            while (incrementVector(ref pos, vecLOS, vec2, GameConstants.TileHeight / 2) == true)
+            {
+                int leftTile = (int)Math.Floor(pos.X / GameConstants.TileWidth);
+                int rightTile = (int)Math.Ceiling((pos.X / GameConstants.TileWidth)) - 1;
+                int topTile = (int)Math.Floor(pos.Y / GameConstants.TileHeight);
+                int bottomTile = (int)Math.Ceiling((pos.Y / GameConstants.TileHeight)) - 1;
+
+                for (int y = topTile; y <= bottomTile; ++y)
+                {
+                    for (int x = leftTile; x <= rightTile; ++x)
+                    {
+                        // If this tile is collidable,
+
+                        if(level.GetCollision(x, y))
+                        {
+                            retval = false;
+                        }
+                    }
+                }
+
+            }
+
+            return retval;
+
+        }
+
+        private static bool incrementVector(ref Vector2 position, Vector2 dir, Vector2 dest, int amount)
+        {
+            //quick and dirty vector (slope) reduction
+            //dir = Helper.reduceVector2(dir);
+
+            
+            float startDist = DrawPrimitives.getDistance(position, dest);
+
+            position.X += (dir.X * amount);
+            position.Y += (dir.Y * amount);
+
+
+            float endDist = DrawPrimitives.getDistance(position, dest);
+            if (endDist > startDist) //we've passed our destination
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
     }
 
 }

@@ -51,9 +51,9 @@ namespace SevenDayRogue
             this.game = game;
             Vector2 startPos = new Vector2(0,0);
 
-            //startPos = LoadArena();
+            startPos = LoadArena();
 
-            
+            /*
             if (game.r.Next(2) == 0)
             {
                 startPos = LoadCave();
@@ -63,7 +63,7 @@ namespace SevenDayRogue
             {
                startPos =  LoadBerryDungeon();
             }
-             
+             */
 
              this.player = new Player(this, startPos);
            
@@ -142,6 +142,11 @@ namespace SevenDayRogue
                     {
                         isSolid = true;
                     }
+                    else if (game.r.Next(100) < 10)
+                    {
+                        isSolid = true;
+                    }
+
                     else
                     {
                         floorList.Add(new Point(i, j));

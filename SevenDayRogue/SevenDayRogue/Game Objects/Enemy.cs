@@ -18,7 +18,7 @@ namespace SevenDayRogue
         public Vector2 Position;
 
         public Vector2 Direction;
-        public float speed = 50;
+        public float speed = 100;
            
         public Vector2 Velocity;
 
@@ -48,16 +48,16 @@ namespace SevenDayRogue
         public int waypointIndex=0;
         public List<Point> waypointList = new List<Point>();
 
+        private bool isActive = false;
+
         public Rectangle BoundingRectangle
         {
             get
             {
-                return new Rectangle((int)Position.X - 13, (int)Position.Y - 13, 25, 25);
+                return new Rectangle((int)(Position.X - origin.X), (int)(Position.Y - origin.Y), 25, 25);
              
             }
         }
-
-
 
         public Enemy(Level level, Vector2 position, EnemyMoveType moveType, EnemyShootType shootType, int hp, int dmg)
         {
@@ -92,22 +92,29 @@ namespace SevenDayRogue
 
         public void Update(GameTime gameTime)
         {
+            if (isActive)
+            {
+                //UpdateWaypoint();
+                //UpdateSeekPlayer();
+                UpdateSeekPlayerAggressive();
 
-            //UpdateWaypoint();
-            //UpdateSeekPlayer();
-            UpdateSeekPlayerAggressive();
+                HitTimer -= gameTime.ElapsedGameTime;
 
-            HitTimer -= gameTime.ElapsedGameTime;
+                float dx = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            float dx = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Position += Velocity * dx;
 
-            Position += Velocity * dx;
+                //Collision.HandleCollisions(level,BoundingRectangle,ref Position);
 
-            //Collision.HandleCollisions(level,BoundingRectangle,ref Position);
-
-            //check if we hit player
-
-            //check if we are 
+            }
+            else
+            {
+                Vector2 losVector = new Vector2();
+                if (Collision.getLOS(level, Position, level.player.Position, ref losVector))
+                {
+                    isActive = true;
+                }
+            }
 
         }
 
@@ -202,6 +209,9 @@ namespace SevenDayRogue
                 return;
             }
 
+            //Vector2 waypointTileCenterPos = TileHelper.GetWorldPosition(waypointList[waypointIndex].X, waypointList[waypointIndex].Y);
+            //if(DrawPrimitives.getDistance(waypointTileCenterPos,Position) < GameConstants.TileWidth /2)
+
             if (curTile == waypointList[waypointIndex])
             {
                 waypointIndex++;
@@ -212,6 +222,9 @@ namespace SevenDayRogue
                     return;
                 }
             }
+
+            //do direction basedon actual positions (not tile centers)
+          // Direction = TileHelper.GetWorldPosition(waypointList[waypointIndex].X, waypointList[waypointIndex].Y) - Position;
 
             Direction = new Vector2(waypointList[waypointIndex].X, waypointList[waypointIndex].Y) - curTileVector;
             Direction.Normalize();
@@ -265,7 +278,7 @@ namespace SevenDayRogue
             spriteBatch.Draw(texture, Position, null, Color.White, rotation, origin, 1f, SpriteEffects.None, 0);
 
             //position location
-            DrawPrimitives.DrawRectangle(new Rectangle((int)Position.X, (int)Position.Y, 2, 2), level.game.WhitePixel, Color.White, spriteBatch, true, 1);
+            DrawPrimitives.DrawRectangle(new Rectangle((int)Position.X-2, (int)Position.Y-2, 4, 4), level.game.WhitePixel, Color.White, spriteBatch, true, 1);
 
         }
 
