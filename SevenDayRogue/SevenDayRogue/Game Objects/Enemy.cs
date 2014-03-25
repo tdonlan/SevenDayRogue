@@ -50,6 +50,9 @@ namespace SevenDayRogue
 
         private bool isActive = false;
 
+        public TimeSpan shootTimer;
+        public float shootTime = 1f;
+
         public Rectangle BoundingRectangle
         {
             get
@@ -78,10 +81,7 @@ namespace SevenDayRogue
 
             c = Color.Red;
 
-            //setWaypointSquare();
-            //setWaypointSeekPlayer();
-            //setWaypointSmallPatrol();
-            setWaypointLargePatrol();
+            setWaypoints();
         }
 
         private void LoadContent()
@@ -92,44 +92,42 @@ namespace SevenDayRogue
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
         }
 
-        public void Update(GameTime gameTime)
+
+        private void setWaypoints()
         {
-            if (isActive)
+            switch (moveType)
             {
-                UpdateWaypoint();
-                //UpdateSeekPlayer();
-                //UpdateSeekPlayerAggressive();
-
-                HitTimer -= gameTime.ElapsedGameTime;
-
-                float dx = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                Position += Velocity * dx;
-
-                //Collision.HandleCollisions(level,BoundingRectangle,ref Position);
-
+                case EnemyMoveType.Static:
+                    break;
+                case EnemyMoveType.SmallPatrol:
+                    setWaypointSmallPatrol();
+                    break;
+                case EnemyMoveType.SeekPlayer:
+                    setWaypointSeekPlayer();
+                    break;
+                case EnemyMoveType.LineOfSight:
+                    setWaypointSeekPlayer();
+                    break;
+                case EnemyMoveType.LargePatrol:
+                    setWaypointLargePatrol();
+                    break;
+                default:
+                    break;
             }
-            else
-            {
-                Vector2 losVector = new Vector2();
-                if (Collision.getLOS(level, Position, level.player.Position, ref losVector))
-                {
-                    isActive = true;
-                }
-            }
-
         }
 
+
         //make a simple square waypoint list
+        //TESTING
         private void setWaypointSquare()
         {
             isWaypointLooping = true;
             //starting tile
-             Vector2 curTileVector = TileHelper.GetTilePosition(Position);
-             waypointList.Add(new Point((int)curTileVector.X, (int)curTileVector.Y));
-             waypointList.Add(new Point((int)curTileVector.X, (int)curTileVector.Y - 2));
-             waypointList.Add(new Point((int)curTileVector.X+2, (int)curTileVector.Y - 2));
-             waypointList.Add(new Point((int)curTileVector.X+2, (int)curTileVector.Y));
+            Vector2 curTileVector = TileHelper.GetTilePosition(Position);
+            waypointList.Add(new Point((int)curTileVector.X, (int)curTileVector.Y));
+            waypointList.Add(new Point((int)curTileVector.X, (int)curTileVector.Y - 2));
+            waypointList.Add(new Point((int)curTileVector.X + 2, (int)curTileVector.Y - 2));
+            waypointList.Add(new Point((int)curTileVector.X + 2, (int)curTileVector.Y));
         }
 
 
@@ -186,6 +184,64 @@ namespace SevenDayRogue
 
             waypointIndex = 0;
         }
+
+        public void Update(GameTime gameTime)
+        {
+            if (isActive)
+            {
+                UpdateWaypoint();
+                //UpdateSeekPlayer();
+                //UpdateSeekPlayerAggressive();
+
+                UpdateShooting(gameTime);
+
+                HitTimer -= gameTime.ElapsedGameTime;
+
+                float dx = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                Position += Velocity * dx;
+
+                //Collision.HandleCollisions(level,BoundingRectangle,ref Position);
+
+            }
+            else
+            {
+                Vector2 losVector = new Vector2();
+                if (Collision.getLOS(level, Position, level.player.Position, ref losVector))
+                {
+                    isActive = true;
+                }
+            }
+
+        }
+
+
+        private void UpdateMovement(GameTime gameTime)
+        {
+         
+            switch (moveType)
+            {
+                case EnemyMoveType.Static:
+                    break;
+                case EnemyMoveType.SmallPatrol:
+                    UpdateWaypoint();
+                    break;
+                case EnemyMoveType.SeekPlayer:
+                    UpdateSeekPlayerAggressive();
+                    break;
+                case EnemyMoveType.LineOfSight:
+                    UpdateSeekPlayer();
+                    break;
+                case EnemyMoveType.LargePatrol:
+                    UpdateWaypoint();
+                    break;
+                default:
+                    break;
+            }
+            
+        }
+
+       
 
         private void UpdateWaypoint()
         {
@@ -257,9 +313,7 @@ namespace SevenDayRogue
                 return;
             }
 
-            //Vector2 waypointTileCenterPos = TileHelper.GetWorldPosition(waypointList[waypointIndex].X, waypointList[waypointIndex].Y);
-            //if(DrawPrimitives.getDistance(waypointTileCenterPos,Position) < GameConstants.TileWidth /2)
-
+  
             if (curTile == waypointList[waypointIndex])
             {
                 waypointIndex++;
@@ -277,6 +331,65 @@ namespace SevenDayRogue
             Direction = new Vector2(waypointList[waypointIndex].X, waypointList[waypointIndex].Y) - curTileVector;
             Direction.Normalize();
             Velocity = Direction * speed;
+        }
+
+        private void UpdateShooting(GameTime gameTime)
+        {
+            shootTimer -= gameTime.ElapsedGameTime;
+            if (shootTimer < TimeSpan.Zero)
+            {
+                switch (shootType)
+                {
+                    case EnemyShootType.Random:
+                        //random direction, random timer
+                        level.SpawnBullet(Position, getRandomVector(), BulletType.Red, false);
+                        shootTimer = TimeSpan.FromSeconds(shootTime);
+                        break;
+                    case EnemyShootType.Shooter:
+                        level.SpawnBullet(Position, getPlayerVector(), BulletType.Red, false);
+                        shootTimer = TimeSpan.FromSeconds(shootTime);
+                        break;
+                    case EnemyShootType.Shotgun:
+                        Vector2 direction = getPlayerVector();
+                        for (int i = 0; i < 5; i++)
+                        {
+                            Vector2 newDir = new Vector2(direction.X + level.game.r.Next(-10, 10), direction.Y + level.game.r.Next(-10, 10));
+                            level.SpawnBullet(Position, newDir, BulletType.Red, false);
+                        }
+                        shootTimer = TimeSpan.FromSeconds(shootTime);
+                        break;
+                    case EnemyShootType.Sniper:
+                        level.SpawnBullet(Position, getPlayerVector(), BulletType.Red, false);
+                        break;
+                    case EnemyShootType.Spray:
+                        Vector2 dir2 = getPlayerVector();
+                        Vector2 newDir2 = new Vector2(dir2.X + level.game.r.Next(-10, 10), dir2.Y + level.game.r.Next(-10, 10));
+                        level.SpawnBullet(Position, newDir2, BulletType.Red, false);
+                        break;
+                    case EnemyShootType.Turret:
+                        level.SpawnBullet(Position, getPlayerVector(), BulletType.Red, false);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //get vector to shoot at player
+        private Vector2 getPlayerVector()
+        {
+            Vector2 dif = level.player.Position - Position;
+            if (dif.X != 0 && dif.Y != 0)
+            {
+                dif.Normalize();
+            }
+            return dif;
+        }
+
+        private Vector2 getRandomVector()
+        {
+            double radian = level.game.r.NextDouble() * Math.PI;
+            return new Vector2((float)Math.Cos(radian), (float)Math.Sin(radian));
         }
 
         private void Kill(BulletType bulletType, bool isExplosion)

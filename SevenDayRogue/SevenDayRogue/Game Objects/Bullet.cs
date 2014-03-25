@@ -67,12 +67,23 @@ namespace SevenDayRogue
             Position += new Vector2(Direction.X * speed * elapsed, Direction.Y * speed * elapsed);
 
             //check if we shoot enemy
-            for(int i=level.enemyList.Count-1;i>=0;i--)
+            if (isPlayers)
             {
-                if (level.enemyList[i].BoundingRectangle.Intersects(BoundingRectangle))
+                for (int i = level.enemyList.Count - 1; i >= 0; i--)
                 {
-                    
-                    level.enemyList[i].Hit(type, damage, false);
+                    if (level.enemyList[i].BoundingRectangle.Intersects(BoundingRectangle))
+                    {
+
+                        level.enemyList[i].Hit(type, damage, false);
+                        level.DespawnBullet(this);
+                    }
+                }
+            }
+            else
+            {
+                if (level.player.BoundingRectangle.Intersects(BoundingRectangle))
+                {
+                    level.player.Hit(damage);
                     level.DespawnBullet(this);
                 }
             }
@@ -90,8 +101,15 @@ namespace SevenDayRogue
         
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.WhitePixel, Color.Green, spriteBatch, true, 1);
-            //spriteBatch.Draw(texture, Position, null, Color.White, 0f, origin, 1f, SpriteEffects.None, 0);
+            if (isPlayers)
+            {
+                DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.WhitePixel, Color.Green, spriteBatch, true, 1);
+                //spriteBatch.Draw(texture, Position, null, Color.White, 0f, origin, 1f, SpriteEffects.None, 0);
+            }
+            else
+            {
+                DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.WhitePixel, Color.Red, spriteBatch, true, 1);
+            }
           
         }
 

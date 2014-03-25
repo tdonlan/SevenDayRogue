@@ -54,8 +54,11 @@ namespace SevenDayRogue
 
     public enum EnemyShootType
     {
-        RandomTimer,
+        Shooter,
         Sniper,
+        Turret,
+        Shotgun,
+        Random,
         Spray,
 
     }

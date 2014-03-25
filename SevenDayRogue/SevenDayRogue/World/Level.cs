@@ -43,6 +43,7 @@ namespace SevenDayRogue
         public Player player;
 
         public List<Bullet> playerBulletList;
+        public List<Bullet> enemyBulletList;
         public List<Enemy> enemyList;
 
         //New Level constructore
@@ -98,6 +99,7 @@ namespace SevenDayRogue
         private void LoadContent()
         {
             this.playerBulletList = new List<Bullet>();
+            this.enemyBulletList = new List<Bullet>();
             this.enemyList = new List<Enemy>();
             SpawnEnemies();
         }
@@ -333,6 +335,18 @@ namespace SevenDayRogue
                     DespawnBullet(playerBulletList[i]);
                 }
             }
+
+            for (int i = enemyBulletList.Count - 1; i >= 0; i--)
+            {
+                if (isOnScreen(enemyBulletList[i].BoundingRectangle))
+                {
+                    enemyBulletList[i].Update(gameTime);
+                }
+                else
+                {
+                    DespawnBullet(enemyBulletList[i]);
+                }
+            }
         }
 
         public void UpdateEnemies(GameTime gameTime)
@@ -400,7 +414,7 @@ namespace SevenDayRogue
 
             for (int i = 0; i < enemyCount; i++)
             {
-                SpawnEnemy(popRandomFloorPoint(), EnemyMoveType.SeekPlayer,EnemyShootType.RandomTimer);
+                SpawnEnemy(popRandomFloorPoint(), EnemyMoveType.SeekPlayer, EnemyShootType.Shotgun);
             }
         }
 
@@ -428,8 +442,16 @@ namespace SevenDayRogue
 
         public void SpawnBullet(Vector2 pos, Vector2 direction, BulletType type, bool isPlayer)
         {
-            Bullet b = new Bullet(this, pos, direction, 10, 750, BulletType.Red, isPlayer);
-            playerBulletList.Add(b);
+            if (isPlayer)
+            {
+                Bullet b = new Bullet(this, pos, direction, 10, 750, BulletType.Red, isPlayer);
+                playerBulletList.Add(b);
+            }
+            else
+            {
+                Bullet b = new Bullet(this, pos, direction, 10, 250, BulletType.Red, isPlayer);
+                enemyBulletList.Add(b);
+            }
         }
 
         public void DespawnBullet(Bullet b)
@@ -437,6 +459,10 @@ namespace SevenDayRogue
             if (b.isPlayers)
             {
                 playerBulletList.Remove(b);
+            }
+            else
+            {
+                enemyBulletList.Remove(b);
             }
 
         }
@@ -462,7 +488,11 @@ namespace SevenDayRogue
             {
                 b.Draw(gameTime, spriteBatch);
             }
-            
+
+            foreach (Bullet b in enemyBulletList)
+            {
+                b.Draw(gameTime, spriteBatch);
+            }
 
             spriteBatch.End();
 
