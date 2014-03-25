@@ -11,6 +11,33 @@ using Microsoft.Xna.Framework.Media;
 
 namespace SevenDayRogue
 {
+
+    public class EnemyFactory
+    {
+        public static Enemy getRandomEnemy(Random r, Level level, Vector2 pos)
+        {
+            int levelIndex = level.game.levelIndex;
+            int difficulty = r.Next(levelIndex / 2, levelIndex * 2);
+            int movePts = (int)Math.Round(difficulty * r.NextDouble());
+            int shootPts = difficulty - movePts;
+
+            int hp = r.Next(10) * levelIndex;
+            int dmg = r.Next(levelIndex);
+
+            return new Enemy(level, pos, getMoveType(r,movePts), getShootType(r,shootPts), hp, dmg);
+        }
+
+        private static EnemyMoveType getMoveType(Random r, int pts)
+        {
+            return (EnemyMoveType)r.Next(5);
+        }
+
+        private static EnemyShootType getShootType(Random r, int pts)
+        {
+            return (EnemyShootType)r.Next(6);
+        }
+    }
+
     public class Enemy
     {
         public Level level;
@@ -189,9 +216,7 @@ namespace SevenDayRogue
         {
             if (isActive)
             {
-                UpdateWaypoint();
-                //UpdateSeekPlayer();
-                //UpdateSeekPlayerAggressive();
+                UpdateMovement(gameTime);
 
                 UpdateShooting(gameTime);
 
@@ -425,9 +450,12 @@ namespace SevenDayRogue
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             //destination
-            Vector2 dest = TileHelper.GetWorldPosition(waypointList[waypointIndex].X,waypointList[waypointIndex].Y);
-            Rectangle destRect = new Rectangle((int)dest.X, (int)dest.Y, 25, 25);
-            DrawPrimitives.DrawRectangle(destRect, level.game.WhitePixel, Color.Yellow, spriteBatch, true, 1);
+            if (waypointList.Count > 0)
+            {
+                Vector2 dest = TileHelper.GetWorldPosition(waypointList[waypointIndex].X, waypointList[waypointIndex].Y);
+                Rectangle destRect = new Rectangle((int)dest.X, (int)dest.Y, 25, 25);
+                DrawPrimitives.DrawRectangle(destRect, level.game.WhitePixel, Color.Yellow, spriteBatch, true, 1);
+            }
 
 
             //spriteBatch.Draw(texture, Position, null, c, rotation, origin, 1f, SpriteEffects.None, 1);
