@@ -25,6 +25,10 @@ namespace SevenDayRogue
         public int totalHP;
         public int HP;
 
+        public int xpLevel;
+        public int xp;
+        public List<int> levelXPCurve = new List<int>();
+
         public TimeSpan hitTimer;
         public float hitTime = 1f;
 
@@ -46,13 +50,37 @@ namespace SevenDayRogue
             return new Rectangle((int)pos.X - 13, (int)pos.Y - 13, 25, 25);
         }
 
+        public int XPRelative
+        {
+            get
+            {
+                return xp - levelXPCurve[xpLevel - 1];
+            }
+        }
+
+        public int XPNeededRelative
+        {
+            get
+            {
+                return levelXPCurve[xpLevel] - levelXPCurve[xpLevel-1];
+            }
+        }
+
+        public int XPNeeded
+        {
+            get { return levelXPCurve[xpLevel]; }
+        }
+
         public Player(Level level, Vector2 position)
         {
             this.level = level;
             this.Position = position;
             this.totalHP = 100;
             this.HP = this.totalHP; 
-                
+
+            this.xp = 50;
+            this.xpLevel = 1;
+            setXPCurveList();
 
             LoadContent();
         }
@@ -64,7 +92,16 @@ namespace SevenDayRogue
             rotation = 0;
         }
 
-
+        private void setXPCurveList()
+        {
+            levelXPCurve.Add(0);
+            int xpAmt = 100;
+            for(int i=1;i<100;i++)
+            {
+                levelXPCurve.Add(xpAmt);
+                xpAmt += (int)Math.Round(xpAmt * 1.1);
+            }
+        }
 
         public void Update(GameTime gameTime)
         {
@@ -192,6 +229,30 @@ namespace SevenDayRogue
         public void Die()
         {
             level.game.Die();
+        }
+
+        public void getXP(int xp)
+        {
+            this.xp += xp;
+            setXPLevel();
+        }
+
+        public void setXPLevel()
+        {
+            int index = xpLevel;
+            while (levelXPCurve[index] < xp)
+            {
+                index++;
+                LevelUp();
+            }
+        }
+
+        private void LevelUp()
+        {
+            xpLevel++;
+            totalHP += 10;
+            HP = totalHP;
+
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

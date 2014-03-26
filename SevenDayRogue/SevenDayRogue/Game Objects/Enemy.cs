@@ -23,6 +23,7 @@ namespace SevenDayRogue
 
             int hp = r.Next(10) * levelIndex;
             int dmg = r.Next(levelIndex);
+           
 
             return new Enemy(level, pos, getMoveType(r,movePts), getShootType(r,shootPts), hp, dmg);
         }
@@ -57,6 +58,7 @@ namespace SevenDayRogue
 
         public int TotalHP;
         public int hp;
+       
         public int score;
 
       
@@ -100,9 +102,11 @@ namespace SevenDayRogue
             this.hp = TotalHP;
             this.dmg = dmg;
 
+
+
             HitTimer = TimeSpan.FromSeconds(1); //brief invincibility when spawning
 
-            score = 1;
+            this.score = hp;
 
             LoadContent();
 
@@ -419,7 +423,9 @@ namespace SevenDayRogue
 
         private void Kill(BulletType bulletType, bool isExplosion)
         {      
+            level.player.getXP(score);
             level.DespawnEnemy(this);
+           
         }
 
 

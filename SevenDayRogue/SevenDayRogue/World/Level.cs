@@ -580,6 +580,19 @@ namespace SevenDayRogue
             Rectangle playerHealthRec = new Rectangle(50,650,1180,25);
             Color healthRed = new Color(200, 0, 0, 100);
             DrawPrimitives.DrawHealthBar(spriteBatch, game.WhitePixel, playerHealthRec, healthRed, true, true, player.HP, player.totalHP);
+            string hpText = string.Format("{0} / {1}", player.HP, player.totalHP);
+            spriteBatch.DrawString(game.font, hpText, new Vector2(playerHealthRec.Center.X, playerHealthRec.Center.Y), Color.Black);
+
+
+            //player XP Level
+            Rectangle playerXPRec = new Rectangle(50, 675, 1180, 25);
+            Color xpPurple = new Color(100, 0, 100, 100);
+            DrawPrimitives.DrawHealthBar(spriteBatch, game.WhitePixel, playerXPRec, xpPurple, true, true, player.XPRelative, player.XPNeededRelative);
+            string xpText = string.Format("{0} / {1}", player.xp, player.XPNeeded);
+            spriteBatch.DrawString(game.font, xpText, new Vector2(playerXPRec.Center.X, playerXPRec.Center.Y), Color.Black);
+
+            spriteBatch.DrawString(game.font, player.xpLevel.ToString(), new Vector2(50, 675), Color.Black, 0, new Vector2(0, 0), 3, SpriteEffects.None, 1);
+
 
             //crosshairs
             DrawPrimitives.DrawCrossHair(spriteBatch, game.WhitePixel, game.gameInput.mousePos, Color.HotPink);
