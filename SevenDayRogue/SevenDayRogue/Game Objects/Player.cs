@@ -191,7 +191,7 @@ namespace SevenDayRogue
 
         public void Die()
         {
-            //restart the game, show death screen, etc
+            level.game.Die();
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

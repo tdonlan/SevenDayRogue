@@ -35,6 +35,9 @@ namespace SevenDayRogue
 
         public Random r = new Random();
 
+        private bool isDead = false;
+        public DeathScreen deathScreen = null;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -79,9 +82,7 @@ namespace SevenDayRogue
             playerTexture = Content.Load<Texture2D>("player");
             guardTexture = Content.Load<Texture2D>("Guard1");
 
-            levelIndex = 1;
-            currentLevel = new Level(this);
-            levelTileList.Add(currentLevel.tileArray);
+            Restart();
 
         }
 
@@ -101,13 +102,17 @@ namespace SevenDayRogue
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-
             gameInput.getInput(gameTime);
-            // TODO: Add your update logic here
-            currentLevel.Update(gameTime);
+
+           
+            if (isDead)
+            {
+                deathScreen.Update(gameTime);
+            }
+            else
+            {
+                currentLevel.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -136,22 +141,33 @@ namespace SevenDayRogue
             
         }
 
+        public void Die()
+        {
+            isDead = true;
+            deathScreen = new DeathScreen(this);
+        }
+
+        public void Restart()
+        {
+            isDead = false;
+            levelIndex = 1;
+            currentLevel = new Level(this);
+            levelTileList.Add(currentLevel.tileArray);
+        }
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            //spriteBatch.Begin();
-
+         
             currentLevel.Draw(gameTime, spriteBatch);
 
-            //spriteBatch.End();
-                
-
-            // TODO: Add your drawing code here
+            if (isDead)
+            {
+                deathScreen.Draw(gameTime, spriteBatch);
+            }
 
             base.Draw(gameTime);
         }

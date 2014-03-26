@@ -121,6 +121,7 @@
     <Compile Include="Map\MazeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="World\DeathScreen.cs" />
     <Compile Include="World\Enumerations.cs" />
     <Compile Include="World\Game1.cs" />
     <Compile Include="World\GameConstants.cs" />
