@@ -50,6 +50,9 @@ namespace SevenDayRogue
         {
             this.level = level;
             this.Position = position;
+            this.totalHP = 100;
+            this.HP = this.totalHP; 
+                
 
             LoadContent();
         }

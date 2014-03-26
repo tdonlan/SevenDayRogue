@@ -469,6 +469,11 @@ namespace SevenDayRogue
             //position location
             DrawPrimitives.DrawRectangle(new Rectangle((int)Position.X-2, (int)Position.Y-2, 4, 4), level.game.WhitePixel, Color.White, spriteBatch, true, 1);
 
+            //healthbar
+            Rectangle enemyHealthRec = new Rectangle((int)Position.X - BoundingRectangle.Width/2,(int)Position.Y-BoundingRectangle.Height,BoundingRectangle.Width,5);
+
+            DrawPrimitives.DrawHealthBar(spriteBatch, level.game.WhitePixel, enemyHealthRec, Color.Red, false, false, hp, TotalHP);
+
         }
 
 

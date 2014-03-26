@@ -20,6 +20,8 @@ namespace SevenDayRogue
 
         public Game1 game;
 
+        
+
         public Tile[,] tileArray;
 
         private List<Point> floorList = new List<Point>();
@@ -52,9 +54,9 @@ namespace SevenDayRogue
             this.game = game;
             Vector2 startPos = new Vector2(0,0);
 
-            startPos = LoadArena();
+            //startPos = LoadArena();
 
-            /*
+            
             if (game.r.Next(2) == 0)
             {
                 startPos = LoadCave();
@@ -64,7 +66,7 @@ namespace SevenDayRogue
             {
                startPos =  LoadBerryDungeon();
             }
-             */
+             
 
              this.player = new Player(this, startPos);
            
@@ -414,7 +416,9 @@ namespace SevenDayRogue
 
             for (int i = 0; i < enemyCount; i++)
             {
-                SpawnEnemy(popRandomFloorPoint(), EnemyMoveType.SeekPlayer, EnemyShootType.Shotgun);
+
+                enemyList.Add(EnemyFactory.getRandomEnemy(game.r, this, popRandomFloorPoint()));
+                //SpawnEnemy(popRandomFloorPoint(), EnemyMoveType.SeekPlayer, EnemyShootType.Shotgun);
             }
         }
 
@@ -428,6 +432,9 @@ namespace SevenDayRogue
            
 
         }
+
+
+        
 
         public void SpawnEnemy(Vector2 pos, EnemyMoveType moveType, EnemyShootType shootType)
         {
@@ -569,6 +576,10 @@ namespace SevenDayRogue
             Rectangle HUDRec = new Rectangle((int)hudPOS.X,(int)hudPOS.Y,1280,200);
             //DrawPrimitives.DrawRectangle(HUDRec, game.WhitePixel, transBlack, spriteBatch, true, 1);
 
+            //Player HP
+            Rectangle playerHealthRec = new Rectangle(50,650,1180,25);
+            Color healthRed = new Color(200, 0, 0, 100);
+            DrawPrimitives.DrawHealthBar(spriteBatch, game.WhitePixel, playerHealthRec, healthRed, true, true, player.HP, player.totalHP);
 
             //crosshairs
             DrawPrimitives.DrawCrossHair(spriteBatch, game.WhitePixel, game.gameInput.mousePos, Color.HotPink);
