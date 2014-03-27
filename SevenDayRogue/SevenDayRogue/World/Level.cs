@@ -11,6 +11,8 @@ using Microsoft.Xna.Framework.Media;
 
 using System.Xml;
 
+using Krypton;
+using Krypton.Lights;
 
 
 namespace SevenDayRogue
@@ -19,8 +21,6 @@ namespace SevenDayRogue
     {
 
         public Game1 game;
-
-        
 
         public Tile[,] tileArray;
 
@@ -48,15 +48,19 @@ namespace SevenDayRogue
         public List<Bullet> enemyBulletList;
         public List<Enemy> enemyList;
 
+
+        //Lighting
+        Light2D playerLight;
+
         //New Level constructore
         public Level(Game1 game)
         {
             this.game = game;
             Vector2 startPos = new Vector2(0,0);
 
-            //startPos = LoadArena();
+            startPos = LoadArena();
 
-            
+            /*
             if (game.r.Next(2) == 0)
             {
                 startPos = LoadCave();
@@ -66,7 +70,7 @@ namespace SevenDayRogue
             {
                startPos =  LoadBerryDungeon();
             }
-             
+             * */
 
              this.player = new Player(this, startPos);
            
@@ -100,10 +104,116 @@ namespace SevenDayRogue
 
         private void LoadContent()
         {
+            LoadLights();
+            //CreateLights(game.mLightTexture, 10);
+            CreateHulls(5, 5);
+            //LoadHulls();
+
             this.playerBulletList = new List<Bullet>();
             this.enemyBulletList = new List<Bullet>();
             this.enemyList = new List<Enemy>();
             SpawnEnemies();
+
+
+        }
+
+        private void CreateLights(Texture2D texture, int count)
+        {
+            
+            // Make some random lights!
+            for (int i = 0; i < count; i++)
+            {
+                byte r = (byte)(game.r.Next(255 - 64) + 64);
+                byte g = (byte)(game.r.Next(255 - 64) + 64);
+                byte b = (byte)(game.r.Next(255 - 64) + 64);
+
+                Light2D light = new Light2D()
+                {
+                    Texture = texture,
+                    Range = 10f,
+                    Color = new Color(r, g, b),
+                    //Intensity = (float)(this.mRandom.NextDouble() * 0.25 + 0.75),
+                    Intensity = 1f,
+                    //Angle = MathHelper.TwoPi * (float)this.mRandom.NextDouble(),
+                    Angle = MathHelper.TwoPi,
+                    X = (float)(game.r.NextDouble() * 50 - 25),
+                    Y = (float)(game.r.NextDouble() * 50 - 25),
+                };
+
+                // Here we set the light's field of view
+                if (i % 2 == 0)
+                {
+                    //light.Fov = MathHelper.PiOver2 * (float)(this.mRandom.NextDouble() * 0.75 + 0.25);
+                    light.Fov = MathHelper.TwoPi;
+                }
+
+                game.krypton.Lights.Add(light);
+            }
+        }
+
+        private void LoadLights()
+        {
+            playerLight = new Light2D()
+            {
+                Texture = game.mLightTexture,
+                Range =20,
+                Color = Color.White,
+              
+                Intensity = 1f,
+                Angle = MathHelper.TwoPi,
+                X = 0,
+                Y = 0,
+                Fov = MathHelper.TwoPi,
+                
+            };
+
+            game.krypton.Lights.Add(playerLight);
+        }
+
+        private void CreateHulls(int x, int y)
+        {
+            float w = 50;
+            float h = 50;
+
+            // Make lines of lines of hulls!
+            for (int j = 0; j < y; j++)
+            {
+                // Make lines of hulls!
+                for (int i = 0; i < x; i++)
+                {
+                    var posX = ((i * w) / x) - w / 2 + (j % 2 == 0 ? w / x / 2 : 0);
+                    var posY = ((j * h) / y) - h / 2 + (i % 2 == 0 ? h / y / 4 : 0);
+
+                    var hull = ShadowHull.CreateRectangle(Vector2.One);
+                    hull.Position.X = posX;
+                    hull.Position.Y = posY;
+                    hull.Scale.X = (float)(game.r.NextDouble() * 0.75f + 0.25f);
+                    hull.Scale.Y = (float)(game.r.NextDouble() * 0.75f + 0.25f);
+
+                    game.krypton.Hulls.Add(hull);
+                }
+            }
+        }
+
+        
+        //iterate over the entire level adding tiles to the hull set?
+        private void LoadHulls()
+        {
+
+            for (int i = 0; i < tileArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < tileArray.GetLength(1); j++)
+                {
+                    if (tileArray[i, j].isSolid)
+                    {
+                        var hull =  ShadowHull.CreateRectangle(new Vector2(GameConstants.TileWidth, GameConstants.TileHeight));
+                        hull.Position = TileHelper.GetWorldPosition(i, j);
+                        game.krypton.Hulls.Add(hull);
+
+                    }
+                   
+                }
+            }
         }
 
         
@@ -319,9 +429,53 @@ namespace SevenDayRogue
         public void Update(GameTime gameTime)
         {
             player.Update(gameTime);
+            UpdateLights(gameTime);
 
             UpdateBullets(gameTime);
             UpdateEnemies(gameTime);
+
+            
+        }
+
+        private void UpdateLights(GameTime gametime)
+        {
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            {
+                foreach (Light2D light in game.krypton.Lights)
+                {
+                    light.Position = new Vector2(light.Position.X, light.Position.Y - 1);
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            {
+                foreach (Light2D light in game.krypton.Lights)
+                {
+                    light.Position = new Vector2(light.Position.X, light.Position.Y + 1);
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                foreach (Light2D light in game.krypton.Lights)
+                {
+                    light.Position = new Vector2(light.Position.X - 1, light.Position.Y);
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            {
+                foreach (Light2D light in game.krypton.Lights)
+                {
+                    light.Position = new Vector2(light.Position.X + 1, light.Position.Y);
+                }
+            }
+
+            /*
+            foreach (Light2D light in game.krypton.Lights)
+            {
+                light.Position = player.Position;
+               
+            }
+             * */
         }
 
         public void UpdateBullets(GameTime gameTime)
@@ -417,7 +571,7 @@ namespace SevenDayRogue
             for (int i = 0; i < enemyCount; i++)
             {
 
-                enemyList.Add(EnemyFactory.getRandomEnemy(game.r, this, popRandomFloorPoint()));
+                //enemyList.Add(EnemyFactory.getRandomEnemy(game.r, this, popRandomFloorPoint()));
                 //SpawnEnemy(popRandomFloorPoint(), EnemyMoveType.SeekPlayer, EnemyShootType.Shotgun);
             }
         }
@@ -476,11 +630,90 @@ namespace SevenDayRogue
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            // Create a world view projection matrix to use with krypton
+            Matrix world = Matrix.Identity;
+            Matrix view = Matrix.CreateTranslation(new Vector3(0, 0, 0) * -1f);
+            Matrix projection = Matrix.CreateOrthographic(game.mVerticalUnits * game.GraphicsDevice.Viewport.AspectRatio, game.mVerticalUnits, 0, 1);
+
+            // Assign the matrix and pre-render the lightmap.
+            // Make sure not to change the position of any lights or shadow hulls after this call, as it won't take effect till the next frame!
+            game.krypton.Matrix = world * view * projection;
+            game.krypton.Bluriness = 3;
+            game.krypton.LightMapPrepare();
+
+            // Make sure we clear the backbuffer *after* Krypton is done pre-rendering
+            game.GraphicsDevice.Clear(Color.White);
+
+            // ----- DRAW STUFF HERE ----- //
+            // By drawing here, you ensure that your scene is properly lit by krypton.
+            // Drawing after KryptonEngine.Draw will cause you objects to be drawn on top of the lightmap (can be useful, fyi)
+            // ----- DRAW STUFF HERE ----- //
+
+            DrawLevel(gameTime, spriteBatch);
+
+            // Draw krypton (This can be omited if krypton is in the Component list. It will simply draw krypton when base.Draw is called
+            game.krypton.Draw(gameTime);
+            this.DebugDraw();
+
+            // Draw the shadow hulls as-is (no shadow stretching) in pure white on top of the shadows
+            // You can omit this line if you want to see what the light-map looks like :)
+          
+            DrawHUD(gameTime, spriteBatch);
+
+        }
+
+        private void DebugDraw()
+        {
+            game.krypton.RenderHelper.Effect.CurrentTechnique = game.krypton.RenderHelper.Effect.Techniques["DebugDraw"];
+            game.GraphicsDevice.RasterizerState = new RasterizerState()
+            {
+                CullMode = CullMode.None,
+                FillMode = FillMode.WireFrame,
+            };
+            if (Keyboard.GetState().IsKeyDown(Keys.H))
+            {
+                // Clear the helpers vertices
+                game.krypton.RenderHelper.ShadowHullVertices.Clear();
+                game.krypton.RenderHelper.ShadowHullIndicies.Clear();
+
+                foreach (var hull in game.krypton.Hulls)
+                {
+                    game.krypton.RenderHelper.BufferAddShadowHull(hull);
+                }
+
+
+                foreach (var effectPass in game.krypton.RenderHelper.Effect.CurrentTechnique.Passes)
+                {
+                    effectPass.Apply();
+                    game.krypton.RenderHelper.BufferDraw();
+                }
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.L))
+            {
+                game.krypton.RenderHelper.ShadowHullVertices.Clear();
+                game.krypton.RenderHelper.ShadowHullIndicies.Clear();
+
+                foreach (Light2D light in game.krypton.Lights)
+                {
+                    game.krypton.RenderHelper.BufferAddBoundOutline(light.Bounds);
+                }
+
+                foreach (var effectPass in game.krypton.RenderHelper.Effect.CurrentTechnique.Passes)
+                {
+                    effectPass.Apply();
+                    game.krypton.RenderHelper.BufferDraw();
+                }
+            }
+        }
+        
+
+        private void DrawLevel(GameTime gameTime, SpriteBatch spriteBatch)
+        {
             Color transBlack = Color.Lerp(Color.Black, Color.Transparent, .5f);
             ScrollCamera(spriteBatch.GraphicsDevice.Viewport);
             cameraTransform = Matrix.CreateTranslation(-cameraPosition, -cameraPositionYAxis, 0.0f);
 
-            
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, cameraTransform);
 
             DrawTiles(spriteBatch);
@@ -502,11 +735,8 @@ namespace SevenDayRogue
             }
 
             spriteBatch.End();
-
-
-            DrawHUD(gameTime, spriteBatch);
-
         }
+
 
         private void DrawTiles(SpriteBatch spriteBatch)
         {

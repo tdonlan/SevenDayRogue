@@ -9,6 +9,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
+using Krypton;
+using Krypton.Lights;
+
+
 namespace SevenDayRogue
 {
     /// <summary>
@@ -18,6 +22,10 @@ namespace SevenDayRogue
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        public KryptonEngine krypton;
+        public Texture2D mLightTexture;
+        public float mVerticalUnits = 50;
 
         public Texture2D WhitePixel;
         public Texture2D wallTexture;
@@ -49,6 +57,8 @@ namespace SevenDayRogue
 
             levelTileList = new List<Tile[,]>();
 
+            this.krypton = new KryptonEngine(this, "KryptonEffect");
+
         }
 
         /// <summary>
@@ -60,6 +70,7 @@ namespace SevenDayRogue
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            this.krypton.Initialize();
 
             base.Initialize();
         }
@@ -82,9 +93,14 @@ namespace SevenDayRogue
             playerTexture = Content.Load<Texture2D>("player");
             guardTexture = Content.Load<Texture2D>("Guard1");
 
+        
+            this.mLightTexture = LightTextureBuilder.CreatePointLight(this.GraphicsDevice, 512);
+
             Restart();
 
         }
+
+      
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload

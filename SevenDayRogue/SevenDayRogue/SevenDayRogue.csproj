@@ -134,6 +134,10 @@
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Krypton\Krypton.csproj">
+      <Project>{B1BFCB2A-C001-4DAC-BA7D-B68BF28757F3}</Project>
+      <Name>Krypton</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SevenDayRogueContent\SevenDayRogueContent.contentproj">
       <Name>SevenDayRogueContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>

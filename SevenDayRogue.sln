@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenDayRogue", "SevenDayRogue\SevenDayRogue\SevenDayRogue.csproj", "{AA17E364-0A8C-4745-823C-9C9AEE7E8FCA}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "SevenDayRogueContent", "SevenDayRogue\SevenDayRogueContent\SevenDayRogueContent.contentproj", "{8CF37812-B658-4189-A6A5-FDFAED80C99E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenDayRogueContent", "SevenDayRogue\SevenDayRogueContent\SevenDayRogueContent.contentproj", "{8CF37812-B658-4189-A6A5-FDFAED80C99E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Krypton", "SevenDayRogue\Krypton\Krypton.csproj", "{B1BFCB2A-C001-4DAC-BA7D-B68BF28757F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +19,10 @@ Global
 		{AA17E364-0A8C-4745-823C-9C9AEE7E8FCA}.Release|x86.Build.0 = Release|x86
 		{8CF37812-B658-4189-A6A5-FDFAED80C99E}.Debug|x86.ActiveCfg = Debug|x86
 		{8CF37812-B658-4189-A6A5-FDFAED80C99E}.Release|x86.ActiveCfg = Release|x86
+		{B1BFCB2A-C001-4DAC-BA7D-B68BF28757F3}.Debug|x86.ActiveCfg = Debug|x86
+		{B1BFCB2A-C001-4DAC-BA7D-B68BF28757F3}.Debug|x86.Build.0 = Debug|x86
+		{B1BFCB2A-C001-4DAC-BA7D-B68BF28757F3}.Release|x86.ActiveCfg = Release|x86
+		{B1BFCB2A-C001-4DAC-BA7D-B68BF28757F3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
