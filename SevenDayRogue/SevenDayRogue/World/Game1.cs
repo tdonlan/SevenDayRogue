@@ -25,7 +25,7 @@ namespace SevenDayRogue
 
         public KryptonEngine krypton;
         public Texture2D mLightTexture;
-        public float mVerticalUnits = 50;
+        public float mVerticalUnits = 700;
 
         public Texture2D WhitePixel;
         public Texture2D wallTexture;

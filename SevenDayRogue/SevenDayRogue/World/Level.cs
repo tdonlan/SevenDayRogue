@@ -58,9 +58,9 @@ namespace SevenDayRogue
             this.game = game;
             Vector2 startPos = new Vector2(0,0);
 
-            startPos = LoadArena();
+            //startPos = LoadArena();
 
-            /*
+            
             if (game.r.Next(2) == 0)
             {
                 startPos = LoadCave();
@@ -70,7 +70,7 @@ namespace SevenDayRogue
             {
                startPos =  LoadBerryDungeon();
             }
-             * */
+           
 
              this.player = new Player(this, startPos);
            
@@ -106,8 +106,8 @@ namespace SevenDayRogue
         {
             LoadLights();
             //CreateLights(game.mLightTexture, 10);
-            CreateHulls(5, 5);
-            //LoadHulls();
+            //CreateHulls(5, 5);
+            LoadHulls();
 
             this.playerBulletList = new List<Bullet>();
             this.enemyBulletList = new List<Bullet>();
@@ -156,7 +156,7 @@ namespace SevenDayRogue
             playerLight = new Light2D()
             {
                 Texture = game.mLightTexture,
-                Range =20,
+                Range =300,
                 Color = Color.White,
               
                 Intensity = 1f,
@@ -172,8 +172,11 @@ namespace SevenDayRogue
 
         private void CreateHulls(int x, int y)
         {
-            float w = 50;
-            float h = 50;
+            //float w = 50;
+            //float h = 50;
+
+            float w = 720;
+            float h = 1280;
 
             // Make lines of lines of hulls!
             for (int j = 0; j < y; j++)
@@ -207,7 +210,7 @@ namespace SevenDayRogue
                     if (tileArray[i, j].isSolid)
                     {
                         var hull =  ShadowHull.CreateRectangle(new Vector2(GameConstants.TileWidth, GameConstants.TileHeight));
-                        hull.Position = TileHelper.GetWorldPosition(i, j);
+                        hull.Position = TileHelper.GetWorldPosition(i, j) + new Vector2(GameConstants.TileWidth/2,GameConstants.TileHeight/2);
                         game.krypton.Hulls.Add(hull);
 
                     }
@@ -439,43 +442,43 @@ namespace SevenDayRogue
 
         private void UpdateLights(GameTime gametime)
         {
-
+            /*
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
             {
                 foreach (Light2D light in game.krypton.Lights)
                 {
-                    light.Position = new Vector2(light.Position.X, light.Position.Y - 1);
+                    light.Position = new Vector2(light.Position.X, light.Position.Y + 10);
                 }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
             {
                 foreach (Light2D light in game.krypton.Lights)
                 {
-                    light.Position = new Vector2(light.Position.X, light.Position.Y + 1);
+                    light.Position = new Vector2(light.Position.X, light.Position.Y - 10);
                 }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
             {
                 foreach (Light2D light in game.krypton.Lights)
                 {
-                    light.Position = new Vector2(light.Position.X - 1, light.Position.Y);
+                    light.Position = new Vector2(light.Position.X - 10, light.Position.Y);
                 }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
             {
                 foreach (Light2D light in game.krypton.Lights)
                 {
-                    light.Position = new Vector2(light.Position.X + 1, light.Position.Y);
+                    light.Position = new Vector2(light.Position.X + 10, light.Position.Y);
                 }
             }
+             * */
 
-            /*
+
             foreach (Light2D light in game.krypton.Lights)
             {
                 light.Position = player.Position;
-               
+
             }
-             * */
         }
 
         public void UpdateBullets(GameTime gameTime)
@@ -637,7 +640,13 @@ namespace SevenDayRogue
 
             // Assign the matrix and pre-render the lightmap.
             // Make sure not to change the position of any lights or shadow hulls after this call, as it won't take effect till the next frame!
-            game.krypton.Matrix = world * view * projection;
+       
+            //game.krypton.Matrix = world * view * projection;
+           
+            game.krypton.Matrix = cameraTransform;
+            game.krypton.SpriteBatchCompatablityEnabled = true;
+            game.krypton.CullMode = CullMode.None;
+
             game.krypton.Bluriness = 3;
             game.krypton.LightMapPrepare();
 
@@ -710,7 +719,7 @@ namespace SevenDayRogue
 
         private void DrawLevel(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            Color transBlack = Color.Lerp(Color.Black, Color.Transparent, .5f);
+            //Color transBlack = Color.Lerp(Color.Black, Color.Transparent, .5f);
             ScrollCamera(spriteBatch.GraphicsDevice.Viewport);
             cameraTransform = Matrix.CreateTranslation(-cameraPosition, -cameraPositionYAxis, 0.0f);
 
