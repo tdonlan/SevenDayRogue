@@ -287,6 +287,8 @@ namespace SevenDayRogue
 
                 float dx = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+                this.rotation = (float)Math.Atan2((double)Velocity.Y, (double)Velocity.X);
+
                 Position += Velocity * dx;
 
                 //Collision.HandleCollisions(level,BoundingRectangle,ref Position);

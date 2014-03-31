@@ -72,6 +72,8 @@ namespace SevenDayRogue
             {
                startPos =  LoadBerryDungeon();
             }
+
+            setWallTileType();
            
              this.player = new Player(this, startPos);
            
@@ -95,6 +97,8 @@ namespace SevenDayRogue
             {
                 startPos = getLevelPos(TileType.StairUp);
             }
+
+            setWallTileType();
 
             this.player = new Player(this, startPos);
 
@@ -425,7 +429,20 @@ namespace SevenDayRogue
 
         }
 
-        
+        private void setWallTileType()
+        {
+            for (int i = 0; i < tileArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < tileArray.GetLength(1); j++)
+                {
+                    if (tileArray[i, j].isSolid)
+                    {
+                        tileArray[i, j].wallTileType = TileHelper.getWallTileType(this, i, j);
+                    }
+
+                }
+            }
+        }
 
         public void Update(GameTime gameTime)
         {
@@ -645,7 +662,6 @@ namespace SevenDayRogue
             game.krypton.LightMapPrepare();
             Color transBlack = Color.Lerp(Color.Gray, Color.Black, .90f);
 
-
             game.krypton.AmbientColor = transBlack;
 
            
@@ -773,8 +789,11 @@ namespace SevenDayRogue
             Rectangle rec = TileHelper.GetTileRectangle(x, y);
             if (t.isSolid)
             {
-                DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Gray, spriteBatch, true, 1);
+                //DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Gray, spriteBatch, true, 1);
                 //spriteBatch.Draw(game.wallTexture, rec, Color.White);
+
+                spriteBatch.Draw(game.tileset2, rec, TileHelper.getRecForWallType2(t.wallTileType), Color.White);
+
             }
             else
             {
@@ -788,9 +807,10 @@ namespace SevenDayRogue
                 }
                 else
                 {
-
-                    DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.White, spriteBatch, true, 1);
-                    DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Black, spriteBatch, false, 1);
+                    spriteBatch.Draw(game.tileset2, rec, TileHelper.getRecForWallType2(WallTileType.None), Color.White);
+                   // spriteBatch.Draw(game.floorTexture, rec, Color.White);
+                   // DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.White, spriteBatch, true, 1);
+                   // DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Black, spriteBatch, false, 1);
                 }
                   
             }
