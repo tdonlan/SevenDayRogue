@@ -32,6 +32,8 @@ namespace SevenDayRogue
         public Texture2D floorTexture;
         public Texture2D playerTexture;
         public Texture2D guardTexture;
+        public Texture2D tileset;
+        public Texture2D tileset2;
 
         public GameInput gameInput;
 
@@ -87,7 +89,10 @@ namespace SevenDayRogue
             // TODO: use this.Content to load your game content here
             WhitePixel = Content.Load<Texture2D>("WhitePixel") ;
             wallTexture = Content.Load<Texture2D>("wallTile3");
-            floorTexture = Content.Load<Texture2D>("floorTile3");
+            floorTexture = Content.Load<Texture2D>("floorTileB");
+            tileset = Content.Load<Texture2D>("TilesetGray");
+            tileset2 = Content.Load<Texture2D>("BioTile");
+
             font = Content.Load<SpriteFont>("font1");
 
             playerTexture = Content.Load<Texture2D>("player");

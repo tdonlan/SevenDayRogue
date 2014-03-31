@@ -127,6 +127,7 @@
     <Compile Include="World\GameConstants.cs" />
     <Compile Include="World\GameInput.cs" />
     <Compile Include="World\Level.cs" />
+    <Compile Include="World\TextureLoader.cs" />
     <Compile Include="World\Tile.cs" />
   </ItemGroup>
   <ItemGroup>

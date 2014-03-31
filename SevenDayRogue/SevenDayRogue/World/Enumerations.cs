@@ -24,6 +24,25 @@ namespace SevenDayRogue
         Right,
     }
 
+    public enum WallTileType
+    {
+        None,
+        Top,
+        TopRight,
+        InnerTopRight,
+        Right,
+        InnerBottomRight,
+        BottomRight,
+        Bottom,
+        BottomLeft,
+        InnerBottomLeft,
+        Left,
+        InnerTopLeft,
+        TopLeft,
+        Center,
+
+    }
+
 
     public enum BulletType
     {

@@ -186,9 +186,23 @@ namespace SevenDayRogue
                 {
                     if (tileArray[i, j].isSolid)
                     {
-                        var hull =  ShadowHull.CreateRectangle(new Vector2(GameConstants.TileWidth, GameConstants.TileHeight));
-                        hull.Position = TileHelper.GetWorldPosition(i, j) + new Vector2(GameConstants.TileWidth/2,GameConstants.TileHeight/2);
-                        game.krypton.Hulls.Add(hull);
+                        //if we're on an edge, create a smaller hull...
+                        
+                        //if (!GetCollision(i - 1, j) || !GetCollision(i + 1, j) || !GetCollision(i, j + 1) || !GetCollision(i, j - 1))
+                        //{
+                            /*
+                            var hull = ShadowHull.CreateRectangle(new Vector2(GameConstants.TileWidth-10, GameConstants.TileHeight-10));
+                            hull.Position = TileHelper.GetWorldPosition(i, j) + new Vector2(GameConstants.TileWidth / 2, GameConstants.TileHeight / 2);
+                            game.krypton.Hulls.Add(hull);
+                             * */
+                        //}
+                       // else
+                       // {
+
+                            var hull = ShadowHull.CreateRectangle(new Vector2(GameConstants.TileWidth, GameConstants.TileHeight));
+                            hull.Position = TileHelper.GetWorldPosition(i, j) + new Vector2(GameConstants.TileWidth / 2, GameConstants.TileHeight / 2);
+                            game.krypton.Hulls.Add(hull);
+                       // }
                         
                     }
                    
