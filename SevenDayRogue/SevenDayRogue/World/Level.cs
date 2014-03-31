@@ -120,11 +120,11 @@ namespace SevenDayRogue
         private void LoadLights()
         {
             game.krypton.Lights.Clear();
-
+            
             playerLight = new Light2D()
             {
                 Texture = game.mLightTexture,
-                Range =300,
+                Range =500,
                 Color = Color.White,
               
                 Intensity = 1f,
@@ -133,7 +133,9 @@ namespace SevenDayRogue
                 Y = 0,
                 Fov = MathHelper.TwoPi,
                 
+                
             };
+            
             game.krypton.Lights.Add(playerLight);
 
             startLight = new Light2D()
@@ -257,46 +259,59 @@ namespace SevenDayRogue
 
             int height = GameConstants.LevelHeight;
             int width = GameConstants.LevelWidth;
-            CellAutoCave CACave = new CellAutoCave(width, height);
+            bool hasStart = false;
+            bool hasEnd = false;
 
-            tileArray = new Tile[width, height];
-
-            for (int i = 0; i < tileArray.GetLength(0); i++)
+            CellAutoCave CACave = null;
+            while (!hasStart && !hasEnd)
             {
-                for (int j = 0; j < tileArray.GetLength(1); j++)
+                CACave = new CellAutoCave(width, height);
+                hasStart = CACave.hasStart;
+                hasEnd = CACave.hasEnd;
+
+            }
+
+            if (CACave != null)
+            {
+                tileArray = new Tile[width, height];
+
+                for (int i = 0; i < tileArray.GetLength(0); i++)
                 {
-                    bool isSolid = false;
-                    TileType tileType = TileType.Stone;
-
-                    if (i == 0 || j == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1)
+                    for (int j = 0; j < tileArray.GetLength(1); j++)
                     {
-                        isSolid = true;
-                    }
-                    else
-                    {
+                        bool isSolid = false;
+                        TileType tileType = TileType.Stone;
 
-                        if (CACave.grid[i, j] == 1)
+                        if (i == 0 || j == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1)
                         {
                             isSolid = true;
                         }
-                        else if (CACave.grid[i, j] == 2)
-                        {
-                            startPos = TileHelper.GetWorldPosition(i, j);
-                            tileType = TileType.StairDown;
-                        }
-                        else if (CACave.grid[i, j] == 3)
-                        {
-                            tileType = TileType.StairUp;
-                        }
                         else
                         {
-                            floorList.Add(new Point(i, j));
+
+                            if (CACave.grid[i, j] == 1)
+                            {
+                                isSolid = true;
+                            }
+                            else if (CACave.grid[i, j] == 2)
+                            {
+                                startPos = TileHelper.GetWorldPosition(i, j);
+                                tileType = TileType.StairDown;
+                            }
+                            else if (CACave.grid[i, j] == 3)
+                            {
+                                tileType = TileType.StairUp;
+                            }
+                            else
+                            {
+                                floorList.Add(new Point(i, j));
+                            }
+
                         }
-                       
+
+
+                        tileArray[i, j] = new Tile(isSolid, tileType);
                     }
-
-
-                    tileArray[i, j] = new Tile(isSolid, tileType);
                 }
             }
 
@@ -351,46 +366,58 @@ namespace SevenDayRogue
             int height = GameConstants.LevelHeight;
             int width = GameConstants.LevelWidth;
 
-            Generation berryGen = new Generation();
-            berryGen.Generate(width, height);
+            Generation berryGen = null;
+            bool hasStart = false;
+            bool hasEnd = false;
 
-            tileArray = new Tile[berryGen.Width, berryGen.Height];
-
-            for (int i = 0; i < berryGen.Height; i++)
+            while (!hasStart && !hasEnd)
             {
-                for (int j = 0; j < berryGen.Width; j++)
+                 berryGen = new Generation();
+                berryGen.Generate(width, height);
+                hasStart = berryGen.hasStart;
+                hasEnd = berryGen.hasEnd;
+            }
+
+            if (berryGen != null)
+            {
+                tileArray = new Tile[berryGen.Width, berryGen.Height];
+
+                for (int i = 0; i < berryGen.Height; i++)
                 {
-                    bool isSolid = false;
-                    TileType tileType = TileType.Stone;
-
-                    if (i == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1 || j == 0)
+                    for (int j = 0; j < berryGen.Width; j++)
                     {
-                        isSolid = true;
-                    }
-                    else
-                    {
+                        bool isSolid = false;
+                        TileType tileType = TileType.Stone;
 
-                        if (berryGen.Map[i, j] == Generation.Type.Wall || berryGen.Map[i, j] == Generation.Type.Stone)
+                        if (i == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1 || j == 0)
                         {
                             isSolid = true;
                         }
-                        else if (berryGen.Map[i, j] == Generation.Type.Start)
-                        {
-                            startPos = TileHelper.GetWorldPosition(i, j);
-                            tileType = TileType.StairDown;
-                        }
-                        else if (berryGen.Map[i, j] == Generation.Type.End)
-                        {
-                            tileType = TileType.StairUp;
-                        }
                         else
                         {
-                            floorList.Add(new Point(i, j));
-                        }
-                        
-                    }
 
-                    tileArray[i, j] = new Tile(isSolid, tileType);
+                            if (berryGen.Map[i, j] == Generation.Type.Wall || berryGen.Map[i, j] == Generation.Type.Stone)
+                            {
+                                isSolid = true;
+                            }
+                            else if (berryGen.Map[i, j] == Generation.Type.Start)
+                            {
+                                startPos = TileHelper.GetWorldPosition(i, j);
+                                tileType = TileType.StairDown;
+                            }
+                            else if (berryGen.Map[i, j] == Generation.Type.End)
+                            {
+                                tileType = TileType.StairUp;
+                            }
+                            else
+                            {
+                                floorList.Add(new Point(i, j));
+                            }
+
+                        }
+
+                        tileArray[i, j] = new Tile(isSolid, tileType);
+                    }
                 }
             }
 
@@ -616,13 +643,12 @@ namespace SevenDayRogue
 
             game.krypton.Bluriness = 10;
             game.krypton.LightMapPrepare();
-            Color transBlack = Color.Lerp(Color.Gray, Color.Black, .95f);
+            Color transBlack = Color.Lerp(Color.Gray, Color.Black, .90f);
+
 
             game.krypton.AmbientColor = transBlack;
 
            
-          
-
             // Make sure we clear the backbuffer *after* Krypton is done pre-rendering
             game.GraphicsDevice.Clear(Color.White);
 

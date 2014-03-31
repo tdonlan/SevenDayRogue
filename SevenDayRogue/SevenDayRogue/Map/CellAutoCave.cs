@@ -58,8 +58,8 @@ namespace SevenDayRogue
         Random r;
 
 
-        private bool hasStart = false;
-        private bool hasEnd = false;
+        public bool hasStart = false;
+        public bool hasEnd = false;
 
         public CellAutoCave(int x, int y)
         {
@@ -91,8 +91,10 @@ namespace SevenDayRogue
                 generation2(false,false);
             }
 
-
-            generation2(false, true);
+            while (!hasStart && !hasEnd)
+            {
+                generation2(false, true);
+            }
 
         }
 

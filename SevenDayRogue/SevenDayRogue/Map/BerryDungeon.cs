@@ -47,8 +47,8 @@ namespace SevenDayRogue
         private int[,] cost;
         private List<Point> currentPath;
 
-        private bool hasStart = false;
-        private bool hasEnd = false;
+        public bool hasStart = false;
+        public bool hasEnd = false;
 
 
         public Generation()
@@ -82,6 +82,16 @@ namespace SevenDayRogue
 
             // Start the coroutine of generating the segments
             GenerateSegments();
+
+            while (!hasStart)
+            {
+                AddStart(Rooms[0]);
+            }
+
+            while (!hasEnd)
+            {
+                AddEnd(Rooms[r.Next(Rooms.Count - Rooms.Count / 4, Rooms.Count - 1)]);
+            }
         }
 
         /// <summary>
@@ -146,8 +156,7 @@ namespace SevenDayRogue
                 }
             }
 
-            AddStart(Rooms[0]);
-            AddEnd(Rooms[r.Next(Rooms.Count - Rooms.Count / 4, Rooms.Count - 1)]);
+          
 
 
         }
