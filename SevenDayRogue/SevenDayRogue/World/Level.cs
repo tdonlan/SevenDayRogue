@@ -605,16 +605,16 @@ namespace SevenDayRogue
             enemyList.Remove(e);
         }
 
-        public void SpawnBullet(Vector2 pos, Vector2 direction, BulletType type, bool isPlayer)
+        public void SpawnBullet(Vector2 pos, Vector2 direction, int speed, int damage, BulletType type, bool isPlayer)
         {
             if (isPlayer)
             {
-                Bullet b = new Bullet(this, pos, direction, 10, 750, BulletType.Red, isPlayer);
+                Bullet b = new Bullet(this, pos, direction, damage,speed, BulletType.Red, isPlayer);
                 playerBulletList.Add(b);
             }
             else
             {
-                Bullet b = new Bullet(this, pos, direction, 10, 250, BulletType.Red, isPlayer);
+                Bullet b = new Bullet(this, pos, direction, damage, speed, BulletType.Red, isPlayer);
                 enemyBulletList.Add(b);
             }
         }

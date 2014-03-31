@@ -46,9 +46,9 @@ namespace SevenDayRogue
         public Vector2 Position;
 
         public Vector2 Direction;
-        public float speed = 100;
-           
+        public float moveSpeed = 100;
         public Vector2 Velocity;
+
 
         public Texture2D texture; //sprite?
         public Vector2 origin;
@@ -66,7 +66,7 @@ namespace SevenDayRogue
         public EnemyShootType shootType;
 
         public int dmg; //dmg inflicted by crashing into player
-
+        public int shootSpeed;
 
         public TimeSpan HitTimer;
         public float HitTime = .1f;
@@ -102,8 +102,6 @@ namespace SevenDayRogue
             this.hp = TotalHP;
             this.dmg = dmg;
 
-
-
             HitTimer = TimeSpan.FromSeconds(1); //brief invincibility when spawning
 
             this.score = hp;
@@ -112,7 +110,10 @@ namespace SevenDayRogue
 
             c = Color.Red;
 
+            InitMovement();
+            InitShooting();
             setWaypoints();
+            
         }
 
         private void LoadContent()
@@ -123,6 +124,64 @@ namespace SevenDayRogue
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
         }
 
+        private void InitMovement()
+        {
+            switch (moveType)
+            {
+                case EnemyMoveType.LargePatrol:
+                    moveSpeed = 75;
+                    break; 
+                case EnemyMoveType.LineOfSight:
+                    moveSpeed = 100;
+                    break;
+                case EnemyMoveType.SeekPlayer:
+                    moveSpeed = 150; 
+                    break;
+                case EnemyMoveType.SmallPatrol:
+                    moveSpeed = 50;
+                    break;
+                case EnemyMoveType.Static:
+
+                    moveSpeed = 0;
+                    break;
+                default:
+                    moveSpeed = 0;
+                    break;
+            }
+        }
+
+        private void InitShooting()
+        {
+            switch (shootType)
+            {
+                case EnemyShootType.Random:
+                    shootTime = 1f + (float)level.game.r.NextDouble();
+                    shootSpeed = GameConstants.slowEnemyShootSpeed;
+                    break;
+                case EnemyShootType.Shooter:
+                    shootTime = 1f;
+                    shootSpeed = GameConstants.slowEnemyShootSpeed;
+                    break;
+                case EnemyShootType.Shotgun:
+                    shootTime = 2f;
+                    shootSpeed = GameConstants.medEnemyShootSpeed;
+                    break;
+                case EnemyShootType.Sniper:
+                    shootTime = 3f;
+                    shootSpeed = GameConstants.snipeEnemyShootSpeed;
+                    break;
+                case EnemyShootType.Spray:
+                    shootTime = .1f;
+                    shootSpeed = GameConstants.medEnemyShootSpeed;
+                    break;
+                case EnemyShootType.Turret:
+                    shootTime = .05f;
+                    shootSpeed = GameConstants.fastEnemyShootSpeed;
+                    break;
+                      
+                     
+            }
+        }
 
         private void setWaypoints()
         {
@@ -299,7 +358,7 @@ namespace SevenDayRogue
             {
                 Direction.Normalize();
             }
-            Velocity = Direction * speed;
+            Velocity = Direction * moveSpeed;
 
         }
 
@@ -324,7 +383,7 @@ namespace SevenDayRogue
 
             Direction = new Vector2(waypointList[waypointIndex].X, waypointList[waypointIndex].Y) - curTileVector;
             Direction.Normalize();
-            Velocity = Direction * speed;
+            Velocity = Direction * moveSpeed;
         }
 
         private void UpdateSeekPlayerAggressive()
@@ -359,7 +418,7 @@ namespace SevenDayRogue
 
             Direction = new Vector2(waypointList[waypointIndex].X, waypointList[waypointIndex].Y) - curTileVector;
             Direction.Normalize();
-            Velocity = Direction * speed;
+            Velocity = Direction * moveSpeed;
         }
 
         private void UpdateShooting(GameTime gameTime)
@@ -371,11 +430,11 @@ namespace SevenDayRogue
                 {
                     case EnemyShootType.Random:
                         //random direction, random timer
-                        level.SpawnBullet(Position, getRandomVector(), BulletType.Red, false);
+                        level.SpawnBullet(Position, getRandomVector(),shootSpeed,dmg, BulletType.Red, false);
                         shootTimer = TimeSpan.FromSeconds(shootTime);
                         break;
                     case EnemyShootType.Shooter:
-                        level.SpawnBullet(Position, getPlayerVector(), BulletType.Red, false);
+                        level.SpawnBullet(Position, getPlayerVector(), shootSpeed, dmg, BulletType.Red, false);
                         shootTimer = TimeSpan.FromSeconds(shootTime);
                         break;
                     case EnemyShootType.Shotgun:
@@ -383,20 +442,26 @@ namespace SevenDayRogue
                         for (int i = 0; i < 5; i++)
                         {
                             Vector2 newDir = new Vector2(direction.X + level.game.r.Next(-10, 10), direction.Y + level.game.r.Next(-10, 10));
-                            level.SpawnBullet(Position, newDir, BulletType.Red, false);
+                            newDir.Normalize();
+                            level.SpawnBullet(Position, newDir, shootSpeed, dmg, BulletType.Red, false);
                         }
                         shootTimer = TimeSpan.FromSeconds(shootTime);
                         break;
                     case EnemyShootType.Sniper:
-                        level.SpawnBullet(Position, getPlayerVector(), BulletType.Red, false);
+                        level.SpawnBullet(Position, getPlayerVector(), shootSpeed, dmg, BulletType.Red, false);
+                        shootTimer = TimeSpan.FromSeconds(shootTime);
                         break;
                     case EnemyShootType.Spray:
                         Vector2 dir2 = getPlayerVector();
                         Vector2 newDir2 = new Vector2(dir2.X + level.game.r.Next(-10, 10), dir2.Y + level.game.r.Next(-10, 10));
-                        level.SpawnBullet(Position, newDir2, BulletType.Red, false);
+                        newDir2.Normalize();
+                        level.SpawnBullet(Position, newDir2, shootSpeed, dmg, BulletType.Red, false);
+                        shootTimer = TimeSpan.FromSeconds(shootTime);
                         break;
                     case EnemyShootType.Turret:
-                        level.SpawnBullet(Position, getPlayerVector(), BulletType.Red, false);
+                        level.SpawnBullet(Position, getPlayerVector(), shootSpeed, dmg, BulletType.Red, false);
+                        shootTimer = TimeSpan.FromSeconds(shootTime);
+
                         break;
                     default:
                         break;

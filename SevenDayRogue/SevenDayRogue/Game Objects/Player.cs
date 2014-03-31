@@ -36,6 +36,11 @@ namespace SevenDayRogue
         public Vector2 origin;
         public float rotation;
 
+        public float moveSpeed;
+
+        public int shootSpeed;
+        public int shootDmg;
+
 
         public Rectangle BoundingRectangle
         {
@@ -81,6 +86,12 @@ namespace SevenDayRogue
             this.xp = 50;
             this.xpLevel = 1;
             setXPCurveList();
+
+
+            this.shootDmg = 10;
+            this.shootSpeed = GameConstants.playerShootSpeed ;
+            this.moveSpeed = GameConstants.playerSpeed;
+
 
             LoadContent();
         }
@@ -190,7 +201,7 @@ namespace SevenDayRogue
 
             this.Acceleration = moveVector;
             
-            this.Velocity += this.Acceleration * GameConstants.playerSpeed * dx;
+            this.Velocity += this.Acceleration * moveSpeed * dx;
 
             this.Velocity *= .8f;
 
@@ -203,11 +214,10 @@ namespace SevenDayRogue
             {
                 shootTimer = TimeSpan.FromSeconds(shootTime);
 
-
                 Vector2 dir = (level.game.gameInput.mousePos + new Vector2(level.cameraPosition,level.cameraPositionYAxis)) - Position;
                 dir.Normalize();
 
-                level.SpawnBullet(Position, dir, BulletType.Red, true);
+                level.SpawnBullet(Position, dir,shootSpeed,shootDmg, BulletType.Red, true);
 
             }
         }
