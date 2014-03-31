@@ -128,6 +128,23 @@ namespace SevenDayRogue
             }
         }
 
+        public bool isMouseButtonPress(MouseButton button)
+        {
+            switch (button)
+            {
+                case MouseButton.None:
+                    return false;
+                case MouseButton.LeftButton:
+                   return (currentMouseState.LeftButton == ButtonState.Pressed);
+
+                case MouseButton.RightButton:
+                      return (currentMouseState.RightButton == ButtonState.Pressed);
+                default:
+                    return false;
+
+            }
+        }
+
 
 
     }

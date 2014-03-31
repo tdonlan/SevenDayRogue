@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
+using Krypton;
+using Krypton.Lights;
+
 namespace SevenDayRogue
 {
     public class Bullet
@@ -30,6 +33,8 @@ namespace SevenDayRogue
 
         public BulletType type;
 
+        public Light2D light;
+
         public Rectangle BoundingRectangle
         {
             get
@@ -49,6 +54,9 @@ namespace SevenDayRogue
             this.isPlayers = isPlayers;
             this.type = type;
 
+          
+        
+
 
             LoadContent();
         }
@@ -60,11 +68,31 @@ namespace SevenDayRogue
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
         }
 
+        private void LoadLight()
+        {
+            light = new Light2D()
+            {
+                Texture = level.game.mLightTexture,
+                Range = 100,
+                Color = Color.Red,
+
+                Intensity = .5f,
+                Angle = MathHelper.TwoPi,
+                X = Position.X,
+                Y = Position.Y,
+                Fov = MathHelper.TwoPi,
+
+            };
+
+            level.game.krypton.Lights.Add(light);
+        }
+
         public void Update(GameTime gameTime)
         {
 
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Position += new Vector2(Direction.X * speed * elapsed, Direction.Y * speed * elapsed);
+            
 
             //check if we shoot enemy
             if (isPlayers)

@@ -51,6 +51,8 @@ namespace SevenDayRogue
 
         //Lighting
         Light2D playerLight;
+        Light2D startLight;
+        Light2D endLight;
 
         //New Level constructore
         public Level(Game1 game)
@@ -71,7 +73,6 @@ namespace SevenDayRogue
                startPos =  LoadBerryDungeon();
             }
            
-
              this.player = new Player(this, startPos);
            
              LoadContent();
@@ -97,8 +98,6 @@ namespace SevenDayRogue
 
             this.player = new Player(this, startPos);
 
-           
-
             LoadContent();
         }
 
@@ -120,6 +119,8 @@ namespace SevenDayRogue
      
         private void LoadLights()
         {
+            game.krypton.Lights.Clear();
+
             playerLight = new Light2D()
             {
                 Texture = game.mLightTexture,
@@ -133,13 +134,45 @@ namespace SevenDayRogue
                 Fov = MathHelper.TwoPi,
                 
             };
-
             game.krypton.Lights.Add(playerLight);
+
+            startLight = new Light2D()
+            {
+                Texture = game.mLightTexture,
+                Range = 100,
+                Color = Color.Orange,
+
+                Intensity = 1f,
+                Angle = MathHelper.TwoPi,
+                X = getLevelPos(TileType.StairDown).X,
+                Y = getLevelPos(TileType.StairDown).Y,
+                Fov = MathHelper.TwoPi,
+
+            };
+            game.krypton.Lights.Add(startLight);
+
+            endLight = new Light2D()
+            {
+                Texture = game.mLightTexture,
+                Range = 100,
+                Color = Color.Purple,
+
+                Intensity = 1f,
+                Angle = MathHelper.TwoPi,
+                X = getLevelPos(TileType.StairUp).X,
+                Y = getLevelPos(TileType.StairUp).Y,
+                Fov = MathHelper.TwoPi,
+
+            };
+            game.krypton.Lights.Add(endLight);
+
+           
         }
 
         //iterate over the entire level adding tiles to the hull set?
         private void LoadHulls()
         {
+            game.krypton.Hulls.Clear();
 
             for (int i = 0; i < tileArray.GetLength(0); i++)
             {
@@ -150,7 +183,7 @@ namespace SevenDayRogue
                         var hull =  ShadowHull.CreateRectangle(new Vector2(GameConstants.TileWidth, GameConstants.TileHeight));
                         hull.Position = TileHelper.GetWorldPosition(i, j) + new Vector2(GameConstants.TileWidth/2,GameConstants.TileHeight/2);
                         game.krypton.Hulls.Add(hull);
-
+                        
                     }
                    
                 }
@@ -411,12 +444,15 @@ namespace SevenDayRogue
             }
              * */
 
+            playerLight.Position = player.Position;
 
+            /*
             foreach (Light2D light in game.krypton.Lights)
             {
                 light.Position = player.Position;
 
             }
+             * */
         }
 
         public void UpdateBullets(GameTime gameTime)
@@ -558,6 +594,8 @@ namespace SevenDayRogue
 
         public void DespawnBullet(Bullet b)
         {
+     
+
             if (b.isPlayers)
             {
                 playerBulletList.Remove(b);
@@ -578,7 +616,11 @@ namespace SevenDayRogue
 
             game.krypton.Bluriness = 10;
             game.krypton.LightMapPrepare();
-            game.krypton.AmbientColor = Color.Black;
+            Color transBlack = Color.Lerp(Color.Gray, Color.Black, .95f);
+
+            game.krypton.AmbientColor = transBlack;
+
+           
           
 
             // Make sure we clear the backbuffer *after* Krypton is done pre-rendering

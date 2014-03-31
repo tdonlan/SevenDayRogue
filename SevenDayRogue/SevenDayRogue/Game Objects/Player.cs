@@ -175,7 +175,7 @@ namespace SevenDayRogue
                 }
             }
 
-            if (level.game.gameInput.IsNewMouseButtonPress(MouseButton.LeftButton))
+            if (level.game.gameInput.isMouseButtonPress(MouseButton.LeftButton))
             {
                 Shoot();
             }
