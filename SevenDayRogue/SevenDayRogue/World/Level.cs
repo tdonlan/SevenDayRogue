@@ -61,17 +61,22 @@ namespace SevenDayRogue
             Vector2 startPos = new Vector2(0,0);
 
             //startPos = LoadArena();
+           
 
-            
-            if (game.r.Next(2) == 0)
+            switch(game.r.Next(3))
             {
-                startPos = LoadCave();
-                //LoadMaze();
+                case 0:
+                     startPos = LoadCave();
+                    break;
+                case 1:
+                     startPos =  LoadBerryDungeon();
+                    break;
+                case 2:
+                     startPos = LoadMaze();
+                    break;
             }
-            else
-            {
-               startPos =  LoadBerryDungeon();
-            }
+
+           
 
             setWallTileType();
            
@@ -86,6 +91,7 @@ namespace SevenDayRogue
         {
             this.game = game;
             this.tileArray = tileArray;
+            getFloorList();
 
             Vector2 startPos;
 
@@ -108,16 +114,12 @@ namespace SevenDayRogue
         private void LoadContent()
         {
             LoadLights();
-            //CreateLights(game.mLightTexture, 10);
-            //CreateHulls(5, 5);
             LoadHulls();
 
             this.playerBulletList = new List<Bullet>();
             this.enemyBulletList = new List<Bullet>();
             this.enemyList = new List<Enemy>();
             SpawnEnemies();
-
-
         }
 
      
@@ -128,7 +130,7 @@ namespace SevenDayRogue
             playerLight = new Light2D()
             {
                 Texture = game.mLightTexture,
-                Range =500,
+                Range =400,
                 Color = Color.White,
               
                 Intensity = 1f,
@@ -206,6 +208,36 @@ namespace SevenDayRogue
                         
                     }
                    
+                }
+            }
+        }
+
+        //Iterates over the tile array and sets the floor list
+        //done automatically when we generate levels from scratch, but need to do when loading historical levels
+        private void getFloorList()
+        {
+            floorList.Clear();
+            for (int i = 0; i < tileArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < tileArray.GetLength(1); j++)
+                {
+                 
+
+                    if (i == 0 || j == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1)
+                    {
+                       
+                    }
+                    else if (game.r.Next(100) < 10)
+                    {
+                     
+                    }
+
+                    else
+                    {
+                        floorList.Add(new Point(i, j));
+                        
+                    }
+
                 }
             }
         }
@@ -337,12 +369,13 @@ namespace SevenDayRogue
 
         }
 
-        private void LoadMaze()
+        private Vector2 LoadMaze()
         {
+            Vector2 startPos = new Vector2(1000, 1000);
+
             int height = GameConstants.LevelHeight;
             int width = GameConstants.LevelWidth;
 
-          
             MazeBuilder mb = new MazeBuilder(height, width,true, 0);
 
             tileArray = new Tile[width, height];
@@ -352,7 +385,9 @@ namespace SevenDayRogue
                 for (int j = 0; j < tileArray.GetLength(1); j++)
                 {
                     bool isSolid = false;
-                    if (i == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1)
+                   
+                    TileType tileType = TileType.Stone;
+                    if (i == 0 || j == 0 || i == tileArray.GetLength(0) - 1 || j == tileArray.GetLength(1) - 1)
                     {
                         isSolid = true;
                     }
@@ -363,6 +398,15 @@ namespace SevenDayRogue
                         {
                             isSolid = true;
                         }
+                        else if (mb.maze[i, j] == '<')
+                        {
+                            startPos = TileHelper.GetWorldPosition(i, j);
+                            tileType = TileType.StairDown;
+                        }
+                        else if (mb.maze[i, j] == '>')
+                        {
+                            tileType = TileType.StairUp;
+                        }
                         else
                         {
                             floorList.Add(new Point(i, j));
@@ -370,9 +414,11 @@ namespace SevenDayRogue
 
                     }
 
-                    tileArray[i, j] = new Tile(isSolid, TileType.Stone);
+                    tileArray[i, j] = new Tile(isSolid, tileType);
                 }
             }
+
+            return startPos;
 
         }
 
@@ -607,7 +653,7 @@ namespace SevenDayRogue
             {
 
                 enemyList.Add(EnemyFactory.getRandomEnemy(game.r, this, popRandomFloorPoint()));
-                //SpawnEnemy(popRandomFloorPoint(), EnemyMoveType.SeekPlayer, EnemyShootType.Shotgun);
+               
             }
         }
 
@@ -656,6 +702,7 @@ namespace SevenDayRogue
 
             if (b.isPlayers)
             {
+                game.krypton.Lights.Remove(b.light);
                 playerBulletList.Remove(b);
             }
             else
@@ -690,6 +737,8 @@ namespace SevenDayRogue
             DrawLevel(gameTime, spriteBatch);
 
             // Draw krypton (This can be omited if krypton is in the Component list. It will simply draw krypton when base.Draw is called
+            
+            
             game.krypton.Draw(gameTime);
             this.DebugDraw();
 
@@ -806,7 +855,7 @@ namespace SevenDayRogue
                 //DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Gray, spriteBatch, true, 1);
                 //spriteBatch.Draw(game.wallTexture, rec, Color.White);
 
-                spriteBatch.Draw(game.tileset2, rec, TileHelper.getRecForWallType2(t.wallTileType), Color.White);
+                spriteBatch.Draw(game.tileset3, rec, TileHelper.getRecForWallType(t.wallTileType), Color.White);
 
             }
             else
@@ -821,7 +870,7 @@ namespace SevenDayRogue
                 }
                 else
                 {
-                    spriteBatch.Draw(game.tileset2, rec, TileHelper.getRecForWallType2(WallTileType.None), Color.White);
+                    spriteBatch.Draw(game.tileset3, rec, TileHelper.getRecForWallType(WallTileType.None), Color.White);
                    // spriteBatch.Draw(game.floorTexture, rec, Color.White);
                    // DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.White, spriteBatch, true, 1);
                    // DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Black, spriteBatch, false, 1);

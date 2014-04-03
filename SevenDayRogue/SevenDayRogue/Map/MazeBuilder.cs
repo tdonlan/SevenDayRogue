@@ -53,12 +53,16 @@ namespace SevenDayRogue
         private bool noDiagonals;
         private int branchrate;
 
+        List<CavePoint> pointList = new List<CavePoint>();
+        public bool hasStart = false;
+        public bool hasEnd = false;
+
          public MazeBuilder(int height, int width, bool noDiagonals, int branchrate)
         {
             
             this.noDiagonals = noDiagonals;
-            this.height = height;
-            this.width = width;
+            this.height = height/4;
+            this.width = width/4;
             this.branchrate = branchrate;
 
             frontier = new List<Coord>();
@@ -66,13 +70,18 @@ namespace SevenDayRogue
             BuildMaze();
             DoubleSize(2);
 
-            //AddWalls(entryWall, exitWall);
-
+            while (!hasStart && !hasEnd)
+            {
+                AddStairs(pointList);
+            }
+            
         }
 
          private void BuildMaze()
          {
              maze = new char[height, width];
+
+             pointList.Clear();
 
              //traverse the maze and fill in unknown blocks
              for (int i = 0; i < height; i++)
@@ -109,7 +118,10 @@ namespace SevenDayRogue
                  {
 
                      if (maze[i, j] == ',')
+                     {
                          maze[i, j] = '.';
+                         pointList.Add(new CavePoint(i,j));
+                     }
 
                      if (maze[i, j] == '?')
                          maze[i, j] = '#';
@@ -343,9 +355,13 @@ namespace SevenDayRogue
 
          }
 
+        
+
          //takes the maze and stretches it out.  (each tile becomes 4)
          private void DoubleSize(int n)
          {
+             pointList.Clear();
+
              for (int x = 0; x < n; x++)
              {
                  char[,] newMaze = new char[this.height * 2, this.width * 2];
@@ -354,6 +370,14 @@ namespace SevenDayRogue
                  {
                      for (int j = 0; j < this.width; j++)
                      {
+                         if (maze[i, j] == '.')
+                         {
+                             pointList.Add(new CavePoint(i * 2, j * 2));
+                             pointList.Add(new CavePoint(i * 2 + 1, j * 2));
+                             pointList.Add(new CavePoint(i * 2, j * 2 + 1));
+                             pointList.Add(new CavePoint(i * 2 + 1, j * 2 + 1));
+                         }
+
                          newMaze[i * 2, j * 2] = maze[i, j];
                          newMaze[i * 2 + 1, j * 2] = maze[i, j];
                          newMaze[i * 2, j * 2 + 1] = maze[i, j];
@@ -366,6 +390,36 @@ namespace SevenDayRogue
                  this.width *= 2;
              }
 
+         }
+
+        
+         private void AddStairs(List<CavePoint> pointList)
+         {
+             CavePoint p = pointList[r.Next(pointList.Count - 1)];
+             pointList.Remove(p);
+             AddStart(p.x, p.y);
+
+             CavePoint p2 = pointList[r.Next(pointList.Count - 1)];
+             AddEnd(p2.x, p2.y);
+
+         }
+
+         private void AddStart(int x, int y)
+         {
+             if (!hasStart)
+             {
+                 maze[x, y] = '<';
+                 hasStart = true;
+             }
+         }
+
+         private void AddEnd(int x, int y)
+         {
+             if (!hasEnd)
+             {
+                 maze[x, y] = '>';
+                 hasEnd = true;
+             }
          }
 
     }

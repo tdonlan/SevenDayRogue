@@ -47,12 +47,13 @@ namespace SevenDayRogue
             return new Rectangle(x * GameConstants.TileWidth, y * GameConstants.TileHeight, GameConstants.TileWidth, GameConstants.TileHeight);
         }
 
+        //Used for Rectangular tilesets
         public static Rectangle getRecForWallType(WallTileType type)
         {
             switch (type)
             {
                 case WallTileType.None:
-                    return GetTileRectangle(6, 0);
+                    return GetTileRectangle(5, 0);
                 case WallTileType.Top:
                     return GetTileRectangle(3, 0);
                 case WallTileType.TopRight:
@@ -76,17 +77,18 @@ namespace SevenDayRogue
                 case WallTileType.InnerTopLeft:
                     return GetTileRectangle(3, 0);
                 case WallTileType.TopLeft:
-                    return GetTileRectangle(2, 3);
+                    return GetTileRectangle(2, 2);
                 case WallTileType.Center:
-                    return GetTileRectangle(3, 0);
+                    return GetTileRectangle(2, 2);
 
                 default:
-                    return GetTileRectangle(6, 0);
+                    return GetTileRectangle(5, 0);
                   
 
             }
         }
 
+        //used for Cross tilesets
         public static Rectangle getRecForWallType2(WallTileType type)
         {
             switch (type)

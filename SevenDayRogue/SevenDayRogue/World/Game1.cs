@@ -34,6 +34,7 @@ namespace SevenDayRogue
         public Texture2D guardTexture;
         public Texture2D tileset;
         public Texture2D tileset2;
+        public Texture2D tileset3;
 
         public GameInput gameInput;
 
@@ -91,12 +92,13 @@ namespace SevenDayRogue
             wallTexture = Content.Load<Texture2D>("wallTile3");
             floorTexture = Content.Load<Texture2D>("floorTileB");
             tileset = Content.Load<Texture2D>("TilesetGray");
+            tileset3 = Content.Load<Texture2D>("TilesetGray2");
             tileset2 = Content.Load<Texture2D>("BioTile");
 
             font = Content.Load<SpriteFont>("font1");
 
             playerTexture = Content.Load<Texture2D>("player");
-            guardTexture = Content.Load<Texture2D>("Guard1");
+            guardTexture = Content.Load<Texture2D>("Guard2");
 
         
             this.mLightTexture = LightTextureBuilder.CreatePointLight(this.GraphicsDevice, 512);

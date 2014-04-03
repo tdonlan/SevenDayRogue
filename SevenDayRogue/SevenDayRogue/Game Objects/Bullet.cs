@@ -54,8 +54,11 @@ namespace SevenDayRogue
             this.isPlayers = isPlayers;
             this.type = type;
 
-          
-        
+
+            if (isPlayers)
+            {
+                LoadLight();
+            }
 
 
             LoadContent();
@@ -74,7 +77,7 @@ namespace SevenDayRogue
             {
                 Texture = level.game.mLightTexture,
                 Range = 100,
-                Color = Color.Red,
+                Color = Color.White,
 
                 Intensity = .5f,
                 Angle = MathHelper.TwoPi,
@@ -97,6 +100,8 @@ namespace SevenDayRogue
             //check if we shoot enemy
             if (isPlayers)
             {
+                light.Position = Position;
+
                 for (int i = level.enemyList.Count - 1; i >= 0; i--)
                 {
                     if (level.enemyList[i].BoundingRectangle.Intersects(BoundingRectangle))
