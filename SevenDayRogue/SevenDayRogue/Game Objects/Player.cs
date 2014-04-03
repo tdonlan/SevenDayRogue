@@ -267,15 +267,17 @@ namespace SevenDayRogue
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            //Bounding Rectangle
             //DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.WhitePixel, Color.Pink, spriteBatch, true, 1);
             
-
-            spriteBatch.DrawString(level.game.font, Position.X + "," + Position.Y, new Vector2(BoundingRectangle.Center.X, BoundingRectangle.Center.Y), Color.Black);
+            //Text position
+            //spriteBatch.DrawString(level.game.font, Position.X + "," + Position.Y, new Vector2(BoundingRectangle.Center.X, BoundingRectangle.Center.Y), Color.Black);
 
             //spriteBatch.Draw(level.game.playerTexture, Position, Color.White);
             spriteBatch.Draw(texture, Position, null, Color.White, rotation, origin, 1f, SpriteEffects.None, 0);
 
-            DrawPrimitives.DrawRectangle(new Rectangle((int)Position.X - 2, (int)Position.Y - 2, 5, 5), level.game.WhitePixel, Color.Red, spriteBatch, true, 1);
+            //Position Rect
+            //DrawPrimitives.DrawRectangle(new Rectangle((int)Position.X - 2, (int)Position.Y - 2, 5, 5), level.game.WhitePixel, Color.Red, spriteBatch, true, 1);
         }
 
     }
