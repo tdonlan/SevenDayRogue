@@ -25,6 +25,8 @@ namespace SevenDayRogue
         public int totalHP;
         public int HP;
 
+        public int nanites=100;
+
         public int xpLevel;
         public int xp;
         public List<int> levelXPCurve = new List<int>();
@@ -40,6 +42,9 @@ namespace SevenDayRogue
 
         public int shootSpeed;
         public int shootDmg;
+
+        public int selectedGun = 0;
+        public List<Gun> gunList = new List<Gun>();
 
 
         public Rectangle BoundingRectangle
@@ -87,11 +92,10 @@ namespace SevenDayRogue
             this.xpLevel = 1;
             setXPCurveList();
 
-
-            this.shootDmg = 10;
-            this.shootSpeed = GameConstants.playerShootSpeed ;
             this.moveSpeed = GameConstants.playerSpeed;
 
+            gunList.Add(Gun.getMiniGun());
+            setGunStats();
 
             LoadContent();
         }
@@ -101,6 +105,19 @@ namespace SevenDayRogue
             texture = level.game.playerTexture;
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
             rotation = 0;
+        }
+
+        private void setGunStats()
+        {
+            if (gunList.Count > selectedGun)
+            {
+                Gun g = gunList[selectedGun];
+                this.shootDmg = g.damage;
+                this.shootSpeed = g.speed;
+                this.shootTime = g.fireRate;
+
+            }
+
         }
 
         private void setXPCurveList()
@@ -212,12 +229,18 @@ namespace SevenDayRogue
         {
             if (shootTimer < TimeSpan.Zero)
             {
-                shootTimer = TimeSpan.FromSeconds(shootTime);
 
-                Vector2 dir = (level.game.gameInput.mousePos + new Vector2(level.cameraPosition,level.cameraPositionYAxis)) - Position;
-                dir.Normalize();
+                if (nanites > gunList[selectedGun].fireCost)
+                {
+                    nanites -= gunList[selectedGun].fireCost;
 
-                level.SpawnBullet(Position, dir,shootSpeed,shootDmg, BulletType.Red, true);
+                    shootTimer = TimeSpan.FromSeconds(shootTime);
+
+                    Vector2 dir = (level.game.gameInput.mousePos + new Vector2(level.cameraPosition, level.cameraPositionYAxis)) - Position;
+                    dir.Normalize();
+
+                    level.SpawnBullet(Position, dir, shootSpeed, shootDmg, BulletType.Red, true);
+                }
 
             }
         }
@@ -239,6 +262,11 @@ namespace SevenDayRogue
         public void Die()
         {
             level.game.Die();
+        }
+
+        public void GetNanites(int amt)
+        {
+            nanites += amt;
         }
 
         public void getXP(int xp)

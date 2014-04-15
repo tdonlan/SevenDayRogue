@@ -35,6 +35,7 @@ namespace SevenDayRogue
         public Texture2D tileset;
         public Texture2D tileset2;
         public Texture2D tileset3;
+        public Texture2D nanite;
 
         public GameInput gameInput;
 
@@ -94,6 +95,7 @@ namespace SevenDayRogue
             tileset = Content.Load<Texture2D>("TilesetGray");
             tileset3 = Content.Load<Texture2D>("TilesetGray2");
             tileset2 = Content.Load<Texture2D>("BioTile");
+            nanite = Content.Load<Texture2D>("Nanite");
 
             font = Content.Load<SpriteFont>("font1");
 

@@ -115,7 +115,10 @@
     <Compile Include="Core\WordWrapper.cs" />
     <Compile Include="Game Objects\Bullet.cs" />
     <Compile Include="Game Objects\Enemy.cs" />
+    <Compile Include="Game Objects\Gun.cs" />
+    <Compile Include="Game Objects\Nanite.cs" />
     <Compile Include="Game Objects\Player.cs" />
+    <Compile Include="Game Objects\Weapon.cs" />
     <Compile Include="Map\BerryDungeon.cs" />
     <Compile Include="Map\CellAutoCave.cs" />
     <Compile Include="Map\MazeBuilder.cs" />

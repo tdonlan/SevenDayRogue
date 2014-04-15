@@ -489,7 +489,8 @@ namespace SevenDayRogue
         }
 
         private void Kill(BulletType bulletType, bool isExplosion)
-        {      
+        {
+            level.SpawnNanite(Position, TotalHP);
             level.player.getXP(score);
             level.DespawnEnemy(this);
            

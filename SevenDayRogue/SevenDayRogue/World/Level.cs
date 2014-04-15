@@ -47,7 +47,7 @@ namespace SevenDayRogue
         public List<Bullet> playerBulletList;
         public List<Bullet> enemyBulletList;
         public List<Enemy> enemyList;
-
+        public List<Nanite> naniteList = new List<Nanite>();
 
         //Lighting
         Light2D playerLight;
@@ -511,6 +511,7 @@ namespace SevenDayRogue
 
             UpdateBullets(gameTime);
             UpdateEnemies(gameTime);
+            UpdateNanite(gameTime);
 
             
         }
@@ -594,6 +595,14 @@ namespace SevenDayRogue
                 {
                     enemyList[i].Update(gameTime);
                 }
+            }
+        }
+
+        public void UpdateNanite(GameTime gameTime)
+        {
+            for (int i = naniteList.Count-1; i >= 0; i--)
+            {
+                naniteList[i].Update(gameTime);
             }
         }
 
@@ -712,6 +721,16 @@ namespace SevenDayRogue
 
         }
 
+        public void SpawnNanite(Vector2 pos, int amt)
+        {
+            naniteList.Add(new Nanite(this, pos, amt));
+        }
+
+        public void DespawnNanite(Nanite n)
+        {
+            naniteList.Remove(n);
+        }
+
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
 
@@ -820,6 +839,11 @@ namespace SevenDayRogue
                 b.Draw(gameTime, spriteBatch);
             }
 
+            foreach (Nanite n in naniteList)
+            {
+                n.Draw(gameTime, spriteBatch);
+            }
+
             spriteBatch.End();
         }
 
@@ -887,7 +911,9 @@ namespace SevenDayRogue
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(game.font, game.levelIndex.ToString(), new Vector2(20, 20), Color.Black);
+            spriteBatch.DrawString(game.font, game.levelIndex.ToString(), new Vector2(20, 20), Color.White);
+            spriteBatch.DrawString(game.font, player.nanites.ToString(), new Vector2(20, 75), Color.White);
+
 
             Color transBlack = Color.Lerp(Color.Black, Color.Transparent, .1f);
 
