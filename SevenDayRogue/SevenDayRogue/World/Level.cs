@@ -130,7 +130,7 @@ namespace SevenDayRogue
             playerLight = new Light2D()
             {
                 Texture = game.mLightTexture,
-                Range =400,
+                Range = 400,
                 Color = Color.White,
               
                 Intensity = 1f,
@@ -513,51 +513,13 @@ namespace SevenDayRogue
             UpdateEnemies(gameTime);
             UpdateNanite(gameTime);
 
-            
         }
 
         private void UpdateLights(GameTime gametime)
         {
-            /*
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            {
-                foreach (Light2D light in game.krypton.Lights)
-                {
-                    light.Position = new Vector2(light.Position.X, light.Position.Y + 10);
-                }
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                foreach (Light2D light in game.krypton.Lights)
-                {
-                    light.Position = new Vector2(light.Position.X, light.Position.Y - 10);
-                }
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                foreach (Light2D light in game.krypton.Lights)
-                {
-                    light.Position = new Vector2(light.Position.X - 10, light.Position.Y);
-                }
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                foreach (Light2D light in game.krypton.Lights)
-                {
-                    light.Position = new Vector2(light.Position.X + 10, light.Position.Y);
-                }
-            }
-             * */
-
             playerLight.Position = player.Position;
-
-            /*
-            foreach (Light2D light in game.krypton.Lights)
-            {
-                light.Position = player.Position;
-
-            }
-             * */
+            playerLight.Range = MathHelper.Lerp(100, 500, MathHelper.Clamp(player.nanites, 0, 1000) / 1000);
+            playerLight.Intensity = MathHelper.Lerp(1f, 2f, MathHelper.Clamp(player.nanites, 0, 1000) / 1000);
         }
 
         public void UpdateBullets(GameTime gameTime)

@@ -28,19 +28,7 @@ namespace SevenDayRogue
 
         public ContentLoader gameContent;
      
-        /*
-
-        public Texture2D WhitePixel;
-        public Texture2D wallTexture;
-        public Texture2D floorTexture;
-        public Texture2D playerTexture;
-        public Texture2D guardTexture;
-        public Texture2D tileset;
-        public Texture2D tileset2;
-        public Texture2D tileset3;
-        public Texture2D nanite;
-         * */
-
+    
         public GameInput gameInput;
 
         //public SpriteFont font;
@@ -70,12 +58,7 @@ namespace SevenDayRogue
 
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
+    
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
@@ -95,24 +78,7 @@ namespace SevenDayRogue
 
             gameContent = new ContentLoader(Content);
 
-            // TODO: use this.Content to load your game content here
-            /*
-            WhitePixel = Content.Load<Texture2D>("Test/WhitePixel") ;
-            wallTexture = Content.Load<Texture2D>("Textures/wallTile3");
-            floorTexture = Content.Load<Texture2D>("Textures/floorTileB");
-            tileset = Content.Load<Texture2D>("Textures/TilesetGray");
-            tileset3 = Content.Load<Texture2D>("Textures/TilesetGray2");
-            tileset2 = Content.Load<Texture2D>("Textures/BioTile");
-            nanite = Content.Load<Texture2D>("Sprites/Nanite");
 
-            font = Content.Load<SpriteFont>("Fonts/font1");
-            fontMed = Content.Load<SpriteFont>("Fonts/fontMed");
-
-            playerTexture = Content.Load<Texture2D>("Sprites/player");
-            guardTexture = Content.Load<Texture2D>("Sprites/Guard2");
-             * */
-
-        
             this.mLightTexture = LightTextureBuilder.CreatePointLight(this.GraphicsDevice, 512);
 
             Restart();
@@ -130,11 +96,7 @@ namespace SevenDayRogue
             // TODO: Unload any non ContentManager content here
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+    
         protected override void Update(GameTime gameTime)
         {
             gameInput.getInput(gameTime);
@@ -190,10 +152,7 @@ namespace SevenDayRogue
             levelTileList.Add(currentLevel.tileArray);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+    
         protected override void Draw(GameTime gameTime)
         {
          

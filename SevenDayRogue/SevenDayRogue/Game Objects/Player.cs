@@ -25,7 +25,7 @@ namespace SevenDayRogue
         public int totalHP;
         public int HP;
 
-        public int nanites=100;
+        public int nanites=1000;
 
         public int xpLevel;
         public int xp;
