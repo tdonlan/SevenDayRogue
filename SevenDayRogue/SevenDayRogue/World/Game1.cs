@@ -61,7 +61,7 @@ namespace SevenDayRogue
 
             levelTileList = new List<Tile[,]>();
 
-            this.krypton = new KryptonEngine(this, "KryptonEffect");
+            this.krypton = new KryptonEngine(this, "Effects/KryptonEffect");
 
         }
 
@@ -89,18 +89,18 @@ namespace SevenDayRogue
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            WhitePixel = Content.Load<Texture2D>("WhitePixel") ;
-            wallTexture = Content.Load<Texture2D>("wallTile3");
-            floorTexture = Content.Load<Texture2D>("floorTileB");
-            tileset = Content.Load<Texture2D>("TilesetGray");
-            tileset3 = Content.Load<Texture2D>("TilesetGray2");
-            tileset2 = Content.Load<Texture2D>("BioTile");
-            nanite = Content.Load<Texture2D>("Nanite");
+            WhitePixel = Content.Load<Texture2D>("Test/WhitePixel") ;
+            wallTexture = Content.Load<Texture2D>("Textures/wallTile3");
+            floorTexture = Content.Load<Texture2D>("Textures/floorTileB");
+            tileset = Content.Load<Texture2D>("Textures/TilesetGray");
+            tileset3 = Content.Load<Texture2D>("Textures/TilesetGray2");
+            tileset2 = Content.Load<Texture2D>("Textures/BioTile");
+            nanite = Content.Load<Texture2D>("Sprites/Nanite");
 
-            font = Content.Load<SpriteFont>("font1");
+            font = Content.Load<SpriteFont>("Fonts/font1");
 
-            playerTexture = Content.Load<Texture2D>("player");
-            guardTexture = Content.Load<Texture2D>("Guard2");
+            playerTexture = Content.Load<Texture2D>("Sprites/player");
+            guardTexture = Content.Load<Texture2D>("Sprites/Guard2");
 
         
             this.mLightTexture = LightTextureBuilder.CreatePointLight(this.GraphicsDevice, 512);
