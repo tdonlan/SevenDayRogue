@@ -25,7 +25,10 @@ namespace SevenDayRogue
 
         public KryptonEngine krypton;
         public Texture2D mLightTexture;
+
+        public ContentLoader gameContent;
      
+        /*
 
         public Texture2D WhitePixel;
         public Texture2D wallTexture;
@@ -36,10 +39,12 @@ namespace SevenDayRogue
         public Texture2D tileset2;
         public Texture2D tileset3;
         public Texture2D nanite;
+         * */
 
         public GameInput gameInput;
 
-        public SpriteFont font;
+        //public SpriteFont font;
+        //public SpriteFont fontMed;
 
         public Level currentLevel;
         public List<Tile[,]> levelTileList; //list of tilesets for all levels
@@ -88,7 +93,10 @@ namespace SevenDayRogue
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            gameContent = new ContentLoader(Content);
+
             // TODO: use this.Content to load your game content here
+            /*
             WhitePixel = Content.Load<Texture2D>("Test/WhitePixel") ;
             wallTexture = Content.Load<Texture2D>("Textures/wallTile3");
             floorTexture = Content.Load<Texture2D>("Textures/floorTileB");
@@ -98,9 +106,11 @@ namespace SevenDayRogue
             nanite = Content.Load<Texture2D>("Sprites/Nanite");
 
             font = Content.Load<SpriteFont>("Fonts/font1");
+            fontMed = Content.Load<SpriteFont>("Fonts/fontMed");
 
             playerTexture = Content.Load<Texture2D>("Sprites/player");
             guardTexture = Content.Load<Texture2D>("Sprites/Guard2");
+             * */
 
         
             this.mLightTexture = LightTextureBuilder.CreatePointLight(this.GraphicsDevice, 512);

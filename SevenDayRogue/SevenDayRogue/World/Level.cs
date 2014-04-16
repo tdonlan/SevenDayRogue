@@ -879,22 +879,22 @@ namespace SevenDayRogue
                 //DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Gray, spriteBatch, true, 1);
                 //spriteBatch.Draw(game.wallTexture, rec, Color.White);
 
-                spriteBatch.Draw(game.tileset3, rec, TileHelper.getRecForWallType(t.wallTileType), Color.White);
+                spriteBatch.Draw(game.gameContent.getTexture("TileGray"), rec, TileHelper.getRecForWallType(t.wallTileType), Color.White);
 
             }
             else
             {
                 if (t.type == TileType.StairDown)
                 {
-                    DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Orange, spriteBatch, true, 1);
+                    DrawPrimitives.DrawRectangle(rec, game.gameContent.getSprite("WhitePixel"), Color.Orange, spriteBatch, true, 1);
                 }
                 else if (t.type == TileType.StairUp)
                 {
-                    DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Purple, spriteBatch, true, 1);
+                    DrawPrimitives.DrawRectangle(rec, game.gameContent.getSprite("WhitePixel"), Color.Purple, spriteBatch, true, 1);
                 }
                 else
                 {
-                    spriteBatch.Draw(game.tileset3, rec, TileHelper.getRecForWallType(WallTileType.None), Color.White);
+                    spriteBatch.Draw(game.gameContent.getTexture("TileGray"), rec, TileHelper.getRecForWallType(WallTileType.None), Color.White);
                    // spriteBatch.Draw(game.floorTexture, rec, Color.White);
                    // DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.White, spriteBatch, true, 1);
                    // DrawPrimitives.DrawRectangle(rec, game.WhitePixel, Color.Black, spriteBatch, false, 1);
@@ -911,8 +911,8 @@ namespace SevenDayRogue
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(game.font, game.levelIndex.ToString(), new Vector2(20, 20), Color.White);
-            spriteBatch.DrawString(game.font, player.nanites.ToString(), new Vector2(20, 75), Color.White);
+            spriteBatch.DrawString(game.gameContent.getFont("FontMed"), game.levelIndex.ToString(), new Vector2(20, 20), Color.White);
+            spriteBatch.DrawString(game.gameContent.getFont("FontMed"), player.nanites.ToString(), new Vector2(20, 75), Color.White);
 
 
             Color transBlack = Color.Lerp(Color.Black, Color.Transparent, .1f);
@@ -925,23 +925,23 @@ namespace SevenDayRogue
             //Player HP
             Rectangle playerHealthRec = new Rectangle(50,650,1180,25);
             Color healthRed = new Color(200, 0, 0, 100);
-            DrawPrimitives.DrawHealthBar(spriteBatch, game.WhitePixel, playerHealthRec, healthRed, true, true, player.HP, player.totalHP);
+            DrawPrimitives.DrawHealthBar(spriteBatch, game.gameContent.getSprite("WhitePixel"), playerHealthRec, healthRed, true, true, player.HP, player.totalHP);
             string hpText = string.Format("{0} / {1}", player.HP, player.totalHP);
-            spriteBatch.DrawString(game.font, hpText, new Vector2(playerHealthRec.Center.X, playerHealthRec.Center.Y), Color.Black);
+            spriteBatch.DrawString(game.gameContent.getFont("FontMed"), hpText, new Vector2(playerHealthRec.Center.X, playerHealthRec.Center.Y), Color.Black);
 
 
             //player XP Level
             Rectangle playerXPRec = new Rectangle(50, 675, 1180, 25);
             Color xpPurple = new Color(100, 0, 100, 100);
-            DrawPrimitives.DrawHealthBar(spriteBatch, game.WhitePixel, playerXPRec, xpPurple, true, true, player.XPRelative, player.XPNeededRelative);
+            DrawPrimitives.DrawHealthBar(spriteBatch, game.gameContent.getSprite("WhitePixel"), playerXPRec, xpPurple, true, true, player.XPRelative, player.XPNeededRelative);
             string xpText = string.Format("{0} / {1}", player.xp, player.XPNeeded);
-            spriteBatch.DrawString(game.font, xpText, new Vector2(playerXPRec.Center.X, playerXPRec.Center.Y), Color.Black);
+            spriteBatch.DrawString(game.gameContent.getFont("FontMed"), xpText, new Vector2(playerXPRec.Center.X, playerXPRec.Center.Y), Color.Black);
 
-            spriteBatch.DrawString(game.font, player.xpLevel.ToString(), new Vector2(50, 675), Color.Black, 0, new Vector2(0, 0), 3, SpriteEffects.None, 1);
+            spriteBatch.DrawString(game.gameContent.getFont("FontMed"), player.xpLevel.ToString(), new Vector2(50, 675), Color.Black, 0, new Vector2(0, 0), 3, SpriteEffects.None, 1);
 
 
             //crosshairs
-            DrawPrimitives.DrawCrossHair(spriteBatch, game.WhitePixel, game.gameInput.mousePos, Color.HotPink);
+            DrawPrimitives.DrawCrossHair(spriteBatch, game.gameContent.getSprite("WhitePixel"), game.gameInput.mousePos, Color.HotPink);
 
 
             spriteBatch.End();

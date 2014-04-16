@@ -47,7 +47,7 @@ namespace SevenDayRogue
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(level.game.nanite, position, Color.White);
+            spriteBatch.Draw(level.game.gameContent.getSprite("Nanite"), position, Color.White);
         }
 
     }

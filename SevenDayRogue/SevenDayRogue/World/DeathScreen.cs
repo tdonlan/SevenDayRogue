@@ -66,15 +66,15 @@ namespace SevenDayRogue
         {
             spriteBatch.Begin();
             Rectangle screenRec = new Rectangle(0, 0, 1280, 720);
-            DrawPrimitives.DrawRectangle(screenRec, game.WhitePixel, bgColor, spriteBatch, true, 1);
+            DrawPrimitives.DrawRectangle(screenRec, game.gameContent.getSprite("WhitePixel"), bgColor, spriteBatch, true, 1);
 
             Vector2 center = new Vector2(screenRec.Center.X,screenRec.Center.Y);
-            
-            spriteBatch.DrawString(game.font, "You Died", center, Color.Red,0f,new Vector2(0,0),5,SpriteEffects.None,1);
+
+            spriteBatch.DrawString(game.gameContent.getFont("FontMed"), "You Died", center, Color.Red, 0f, new Vector2(0, 0), 5, SpriteEffects.None, 1);
 
             if (canRestart)
             {
-                spriteBatch.DrawString(game.font, "Press any key to restart", center + new Vector2(0,100), Color.White, 0f, new Vector2(0, 0), 2, SpriteEffects.None, 1);
+                spriteBatch.DrawString(game.gameContent.getFont("FontMed"), "Press any key to restart", center + new Vector2(0, 100), Color.White, 0f, new Vector2(0, 0), 2, SpriteEffects.None, 1);
             }
 
             spriteBatch.End();

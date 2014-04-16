@@ -102,7 +102,7 @@ namespace SevenDayRogue
 
         public void LoadContent()
         {
-            texture = level.game.playerTexture;
+            texture = level.game.gameContent.getSprite("Player");
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
             rotation = 0;
         }

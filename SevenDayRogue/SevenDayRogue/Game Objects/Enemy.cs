@@ -118,8 +118,8 @@ namespace SevenDayRogue
 
         private void LoadContent()
         {
-          
-            texture = level.game.guardTexture;
+
+            texture = level.game.gameContent.getSprite("EnemyGuard");
 
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
         }
@@ -547,7 +547,7 @@ namespace SevenDayRogue
 
             //healthbar
             Rectangle enemyHealthRec = new Rectangle((int)Position.X - BoundingRectangle.Width/2,(int)Position.Y-BoundingRectangle.Height,BoundingRectangle.Width,5);
-            DrawPrimitives.DrawHealthBar(spriteBatch, level.game.WhitePixel, enemyHealthRec, Color.Red, false, false, hp, TotalHP);
+            DrawPrimitives.DrawHealthBar(spriteBatch, level.game.gameContent.getSprite("WhitePixel"), enemyHealthRec, Color.Red, false, false, hp, TotalHP);
 
         }
 

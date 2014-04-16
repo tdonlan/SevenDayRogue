@@ -66,7 +66,7 @@ namespace SevenDayRogue
 
         private void LoadContent()
         {
-            texture = level.game.WhitePixel;
+            texture = level.game.gameContent.getSprite("WhitePixel");
 
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
         }
@@ -136,12 +136,12 @@ namespace SevenDayRogue
         {
             if (isPlayers)
             {
-                DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.WhitePixel, Color.Green, spriteBatch, true, 1);
+                DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.gameContent.getSprite("WhitePixel"), Color.Green, spriteBatch, true, 1);
                 //spriteBatch.Draw(texture, Position, null, Color.White, 0f, origin, 1f, SpriteEffects.None, 0);
             }
             else
             {
-                DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.WhitePixel, Color.Red, spriteBatch, true, 1);
+                DrawPrimitives.DrawRectangle(BoundingRectangle, level.game.gameContent.getSprite("WhitePixel"), Color.Red, spriteBatch, true, 1);
             }
           
         }
