@@ -43,6 +43,9 @@ namespace SevenDayRogue
         private bool isDead = false;
         public DeathScreen deathScreen = null;
 
+        public bool isPaused = false;
+        public MenuScreen pauseScreen = null;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -101,10 +104,29 @@ namespace SevenDayRogue
         {
             gameInput.getInput(gameTime);
 
+            if (gameInput.IsNewKeyPress(Keys.Escape))
+            {
+                if (!isPaused)
+                {
+                    isPaused = true;
+                    pauseScreen = new MenuScreen(this);
+                }
+                else
+                {
+                    isPaused = false;
+                    pauseScreen = null;
+                }
+
+            }
+
            
             if (isDead)
             {
                 deathScreen.Update(gameTime);
+            }
+            else if (isPaused)
+            {
+                pauseScreen.Update(gameTime);
             }
             else
             {
@@ -161,6 +183,11 @@ namespace SevenDayRogue
             if (isDead)
             {
                 deathScreen.Draw(gameTime, spriteBatch);
+            }
+
+            if (isPaused)
+            {
+                pauseScreen.Draw(gameTime, spriteBatch);
             }
 
             base.Draw(gameTime);

@@ -17,8 +17,11 @@ namespace SevenDayRogue
 
         public Dictionary<string, Texture2D> textureDictionary = new Dictionary<string, Texture2D>();
         public Dictionary<string, Texture2D> spriteDictionary = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Texture2D> menuDictionary = new Dictionary<string, Texture2D>();
 
         public Dictionary<string, SpriteFont> fontDictionary = new Dictionary<string, SpriteFont>();
+
+
 
         public ContentLoader(ContentManager content)
         {
@@ -27,6 +30,7 @@ namespace SevenDayRogue
             LoadTextures();
             LoadSprites();
             LoadFonts();
+            LoadMenu();
           
 
         }
@@ -52,6 +56,20 @@ namespace SevenDayRogue
 
         private void LoadSounds()
         { }
+
+        private void LoadMenu()
+        {
+           menuDictionary.Add("AgilityIcon", content.Load<Texture2D>("Menu/AgilIcon"));
+           menuDictionary.Add("AttuneIcon", content.Load<Texture2D>("Menu/AttuneIcon"));
+           menuDictionary.Add("StrengthIcon", content.Load<Texture2D>("Menu/StrengthIcon"));
+
+           menuDictionary.Add("Gun1", content.Load<Texture2D>("Menu/Gun1"));
+           menuDictionary.Add("Gun2", content.Load<Texture2D>("Menu/Gun2"));
+           menuDictionary.Add("Knife1", content.Load<Texture2D>("Menu/Knife1"));
+           menuDictionary.Add("Shotgun1", content.Load<Texture2D>("Menu/Shotgun1"));
+
+           menuDictionary.Add("RogueMenu", content.Load<Texture2D>("Menu/RogueMenu"));
+        }
 
 
         public SpriteFont getFont(string name)
@@ -84,6 +102,18 @@ namespace SevenDayRogue
             if (spriteDictionary.ContainsKey(name))
             {
                 return spriteDictionary[name];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Texture2D getMenu(string name)
+        {
+            if (menuDictionary.ContainsKey(name))
+            {
+                return menuDictionary[name];
             }
             else
             {
